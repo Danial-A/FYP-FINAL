@@ -1,0 +1,59 @@
+.search-container{
+    margin: 0 10px;
+    border-radius:10px;
+    background-color:white;
+    height: 10vh;
+    width: 100%;
+}
+.search-container h4{
+    text-align: center;
+    color: crimson;
+    font-weight: bold;
+    padding:0
+}
+.cols {
+    color: crimson;
+}
+
+.search-container li{
+    color:black;
+    margin:0;
+    padding:0;
+ 
+}
+.search-links{
+    padding: 0;
+    margin: 0;
+}
+.search-links ul{
+    padding-left: 10px;
+}
+.search-links ul li{
+    list-style-type:none;
+    margin-top:10px;
+    font-size: 20px;  
+    margin-left: 10px;
+    transition: all 0.05s ease;
+}
+.search-links ul a{
+    text-decoration: none;
+    
+}
+.search-links ul li:hover{
+    color: crimson;
+    text-decoration: underline;
+    font-weight: 500;
+    text-shadow: none;
+}
+.group-button{
+    margin: 2vh 10px 0 10px;
+    text-align: center;
+}
+/* 
+.create-group{
+    height: 10vh;
+    background-color: white;
+    margin: 2vh 10px 0 10px;
+    border-radius: 10px;
+    color: black;
+} */

@@ -1,0 +1,137 @@
+/* .cover-container{
+    position: relative;
+} */
+
+.cover-image{
+    width: 100%;
+    height: 50vh;
+}
+.cover-image img{
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    display: block;
+}
+
+.profile-image{
+    position: absolute;
+    height: 20vh;
+    width: 20vh;
+    border-radius: 50%;
+    top:40vh;
+    left: 47%;;
+    z-index: 2;
+}
+
+.profile-image img{
+    max-width: 100%;
+    max-height:100%;
+    height: 100%;
+    width: 100%;
+    display: block;
+    border-radius:50%;
+    background-size:cover ;
+}
+
+.user-heading h3{
+    color: crimson;
+}
+
+.user-information-section{
+    background-color: #1c2237;
+}
+
+.demo{
+    margin-top: 10vh;
+    height: 150vh;
+}
+
+.post-heading h2{
+    color: crimson;
+    text-align: center;
+}
+
+.user-info{
+    height:50vh;
+    margin-bottom: 10vh;
+}
+
+.user-heading{
+    text-align: center;
+}
+
+.information-section{
+    margin-top: 5vh;
+}
+
+.information-section ul{
+    padding: 0 0 0 20px;
+}
+
+.information-section ul li{
+    list-style: none;
+    
+}
+
+.information-section ul li a{
+    text-decoration: none;
+    color: crimson;
+    font-weight: bold;
+}
+
+.information-section ul li a:hover{
+    color: white;
+    transition: 0.5s ease;
+}
+
+.icon{
+    margin-right: 10px;
+}
+
+.user-notifications h6{
+    color: crimson;
+}
+.user-notifications{
+    text-align: center;
+    margin-top: 30px;
+}
+
+.post-btn-btn{
+    background-color: crimson;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-shadow: none;
+    padding: 5px;
+}
+.post-btn{
+    text-align: center;
+}
+
+
+.post-btn-btn:hover{
+    color: crimson;
+    background-color: white;
+    font-weight: bold;
+    transition: 0.4s ease;
+}
+
+.user-post-section{
+    height: auto;
+}
+
+.groups-section{
+    height: auto;
+    background-color: white;
+    width: 80%;
+    margin-left: 22px;
+    border:2px solid crimson;
+}
+
+.group-names li{
+    border-bottom: 1px solid crimson;
+    padding-bottom:5px;
+}
+.user-home-container{
+    margin-top: 100px; 
+}

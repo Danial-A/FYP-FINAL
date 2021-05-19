@@ -1,0 +1,124 @@
+.main-body{
+    background-color: #1c2237;
+}
+
+.signup-row{
+    height: 85.8vh;
+    position: relative;
+}
+
+.signup img{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+}
+
+.signup{
+    padding:0 20px ;
+}
+.form-fields{
+    padding: 0 !important;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+
+.signup-form-section{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.text-light{
+    color: white;
+    
+}
+
+.section-divider{
+    margin-top: 10px;
+}
+
+.form-fields label{
+    float: right;
+}
+
+.signup-form-section{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.text-center{
+    text-align: center !important;
+    margin-bottom:40px;
+}
+
+.form-check-input{
+    float: right;
+}
+.user-info-row{
+    padding-top: 10px;
+}
+.login-btn button{
+    margin: 0 auto;
+    background-color: crimson;
+    outline: none;
+    border: none;
+}
+
+.login-btn button:hover{
+    color: #1c2237;
+    background-color: white;
+    transition: 0.4s ease;
+}
+
+/* .form-controller{
+    margin-bottom: 20px;
+} */
+
+.dob{
+    padding-left: 10px;
+}
+.dob input{
+    width: 115%;
+}
+
+
+.form-fields input{
+    border-radius: 4px;
+    font-size: 14px;
+    height: 3vh;
+    border: none;
+    width: 80%;
+}
+
+input:focus{
+    outline: none;
+    border-bottom: 3px solid crimson;
+}
+
+.dob{
+    padding-left: 20px !important;
+}
+
+.error p{
+    color:crimson !important;
+}
+
+@media only screen and (max-width: 992px){
+    .dob{
+        padding-left: 10px !important;
+    }
+    .text-light{
+        padding-left:0 !important;
+    }
+    .dob-label{
+        padding-left: 5px !important;
+    }
+}
+.login-btn{
+    text-align: center;
+    margin-top: 20px;
+}

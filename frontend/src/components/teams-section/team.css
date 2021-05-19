@@ -1,0 +1,39 @@
+.team-container{
+    background-color: white;
+    padding: 100px 20px;
+}
+
+.card-main{
+    border: none;
+    text-align: center;
+}
+
+.card-column{
+    display: flex;
+    justify-content: space-around;
+}
+.card-image{
+    border: none;
+    height: 250px;
+    width: 250px;
+    border-radius: 50%;
+
+   
+}
+
+.card-image img{
+    padding-left:20px;
+}
+
+
+.card-text pre, p{
+    color:black;
+}
+.text-center{
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+div.social-links svg{
+    color: crimson;
+}

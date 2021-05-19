@@ -1,0 +1,32 @@
+.user-name{
+    border-bottom: 2px solid crimson;
+    padding-bottom: 3px;
+    margin-bottom: 5px;
+}
+.user-container{
+    margin: 20px 0;
+    display:inline-block
+
+}
+
+.user-box{
+    border:1px solid crimson;
+    padding:10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.user-box a{
+    color:#1c2237;
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+
+}
+
+.user-icon{
+    color: crimson;
+    margin-right: 10px;
+}

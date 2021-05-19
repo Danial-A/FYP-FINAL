@@ -1,0 +1,75 @@
+.user-information-section{
+    padding-left: 20px;
+}
+
+.user-information-display ul li{
+    list-style: none;
+    color: crimson;
+}
+.user-information-display ul{
+    padding: 0;
+}
+.user-information-display pre{
+    display: inline;
+    color:black ;
+    font-weight: bold;
+}
+.user-information-heading h3{
+    text-align: center;
+    color: crimson;
+}
+
+
+.edit-btn button{
+    background-color: crimson;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+}
+.edit-btn button:hover{
+    color: #1c2237;
+    background: white;
+    transition: 0.4s ease;
+}
+
+@media only screen and (max-width: 992px){
+    .user-information-display ul{
+        text-align: center;
+    }
+    .user-information-section{
+        position: relative;
+    }
+    .demo{
+        margin-top: 0 !important;
+    }
+}
+.followers-following-section{
+    background: white;
+}
+
+.followers-following-section a{
+    color: crimson;
+    font-weight: bold;
+}
+
+.follower-section li a{
+    text-decoration: none !important;
+    font-weight: bold;
+    color: crimson;
+}
+ol.follower-section{
+    padding: 0;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+    border-color: #fff #1c2237 #1c2237;
+    color:#1c2237;
+    border-radius: 0;
+}
+
+.no-followers{
+    color: crimson;
+    padding: 10px;
+    text-align: center;
+}

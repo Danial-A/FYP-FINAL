@@ -1,0 +1,89 @@
+/* Side panel css */
+
+.title{
+    border-radius: 10px;
+    background-color: white;
+    text-align: center;
+}
+
+h3{
+    display: inline-block;
+    color:crimson;
+    border-bottom:1px solid crimson;
+    padding-bottom:5px;
+}
+
+.chat-list{
+    background-color: white;
+}
+.chat-list ul{
+    padding: 10px;
+}
+
+/* Main Chat Area CSS */
+.message-area{
+    height: 65vh;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-color: white;
+    margin-top: 2vh;
+    border-radius: 10px;
+
+}
+.send-message{
+    margin-top: 1vh;
+    border-radius: 10px;
+    padding: 0;
+
+}
+.send-message-input{
+    height: 6vh;
+}
+
+/* Message css */
+.message-box{
+    background-color: crimson;
+    color: white;
+    display: inline-flex;
+    max-width: 25vw;
+    margin-bottom:15px;
+    padding:5px;
+    border-radius: 5px;
+}
+
+/* Create new chat */
+.create-new-chat{
+    background-color: white;
+    padding: 10px 15px;
+    border-radius:10px
+}
+.create-new-chat input{
+    margin-bottom: 10px;
+    
+}
+
+/* Users search */
+.user-search-result{
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-info li{
+    list-style-type: none;
+}
+a.chat-info{
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+    transition:all 0.2s ease-in;
+}
+
+a.chat-info:hover{
+    color: crimson;
+}
+
+.pp {
+padding-top: 5px;
+padding-bottom: 5px;
+}

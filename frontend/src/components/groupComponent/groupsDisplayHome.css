@@ -1,0 +1,100 @@
+.groups-main-container{
+    margin:5vh 0;
+    background-color: white;
+    border-radius:10px;
+    padding:10px
+}
+.main-heading h4{
+    color:crimson;
+    text-align: center;
+    text-decoration: underline;
+    font-weight: bold;
+}
+.text-crimson{
+    color:crimson;
+    font-size: 24px;
+    font-weight: 400;
+}
+.text-crimson a{
+    text-decoration: none;
+    color: #1c2237;
+    transition: all 0.2s ease;
+}
+.text-crimson a:hover{
+    color:white;
+    transform: scale(1.1);
+}
+
+span.Create-Group{
+    font-size: 20px;
+    transition: all 0.05s ease
+}
+span.Create-Group:hover{
+    color:#1c2237;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: underline;
+
+}
+.group-container{
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 5px 20px;
+    transition: all 0.2s ease;
+    margin-bottom: 2vh;
+}
+.group-container:hover{
+    background-color: #1c2237;
+}
+
+.group-description{
+    font-size: 18px;
+    text-overflow: ellipsis;
+}
+
+
+/* Group information */
+.group-info{
+    background-color: white;
+    height: auto;
+    padding: 1vh 2vw;
+    border-radius:10px;
+}
+
+.bottom-margin{
+    margin-bottom: 10vh;
+}
+
+.create-post{
+    background-color: white;
+    height: auto;
+    border-radius: 10px;
+}
+.group-posts{
+    height: auto;
+    border-radius: 10px;
+}
+.members-section{
+    background-color: white;
+    height: 30vh;
+    border-radius: 10px;
+}
+.admins{
+    border-radius: 10px;
+    height: 30vh;
+    background-color: white;
+}
+#inputBackground{
+    background-color: #1c2237;
+    color: white;
+}
+#inputBackground::placeholder{
+    color: white;
+}
+.mb-4{
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+

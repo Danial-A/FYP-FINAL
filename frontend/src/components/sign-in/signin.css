@@ -1,0 +1,108 @@
+.main-body{
+    background-color: #1c2237;
+}
+
+.signin-row{
+    height: 85.8vh;
+    position: relative;
+}
+
+.signin img{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+}
+
+.signin{
+    padding:0 20px ;
+}
+.form-fields{
+    padding: 0 !important;
+}
+
+.signin-form-section{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.text-light{
+    color: white;
+}
+
+.section-divider{
+    margin-top: 10px;
+}
+
+.form-fields label{
+    float: right;
+}
+
+.form-label{
+    padding-right:10px;
+}
+
+.text-center{
+    text-align: center !important;
+    margin-bottom:40px;
+}
+
+.form-check-input{
+    float: right;
+}
+.remember-me{
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.login-btn button{
+    margin: 0 auto;
+    background-color: crimson;
+    outline: none;
+    border: none;
+}
+
+.login-btn button:hover{
+    color: #1c2237;
+    background-color: white;
+    transition: 0.4s ease;
+}
+
+.remember-me a{
+    text-decoration: none;
+    color: white;
+}
+
+@media only screen and (max-width : 768px){
+    .signin img{
+        width: 100%;
+        padding-right: 30px;
+    }
+    .form-fields label {
+        float:left;
+    }
+    .login-btn button{
+        margin: 10px 0;
+    }
+    .remember-me{
+        margin: 0;
+        padding-left: 0;
+    }
+    #root > div > div.signin-container.container > div > div:nth-child(1) > div > form > div:nth-child(4) > div:nth-child(1) > div > div{
+        padding-top: 10px;
+    }
+}
+
+@media only screen and (max-width : 575px){
+    .signin img{
+        width: 70%;
+        top: 0;
+        transform: translateY(0%);
+    }
+    .form-fields label {
+        float:left;
+    }
+    
+}
