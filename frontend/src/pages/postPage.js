@@ -22,9 +22,10 @@ function PostPage(props) {
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/post/${props.match.params.id}`)
       .then(res => {
+        console.log(res.data.author)
         setPost(res.data)
-        setComments(res.data.comments)
-        setlikes(res.data.likes)
+        // setComments(res.data.comments)
+        // setlikes(res.data.likes)
       })
       .catch(err => console.log(err))
   }, [])
@@ -87,7 +88,7 @@ function PostPage(props) {
 
               <div className="row">
                 <div className="col-md-6 like-icons-row">
-                  <Tippy content= {likes.length}><Link><FontAwesomeIcon icon={faThumbsUp} /></Link></Tippy>
+                  <Tippy content= '1'><Link><FontAwesomeIcon icon={faThumbsUp} /></Link></Tippy>
                   <Tippy content = {comments.length}><Link><FontAwesomeIcon icon={faComment} /></Link></Tippy>
                 </div>
 

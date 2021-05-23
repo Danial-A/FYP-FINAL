@@ -18,9 +18,9 @@ router.get('/:id', userController._search_by_id)
 //Delete user account
 router.delete('/:id/delete', userController.delete_user_account)
 //Get All followers
-router.get('/:id/followers', userController.get_followers)
+// router.get('/:id/followers', userController.get_followers)
 //Get All user following people
-router.get('/:id/following',userController.get_following)
+// router.get('/:id/following',userController.get_following)
 //Update user information
 router.post('/:id/update', userController.update_user_information)
 
@@ -42,4 +42,8 @@ router.post('/:id/chats/add', userController.add_new_chat)
 router.get('/:id/chats/', userController.get_all_chats)
 //delete user chat
 router.delete('/:id/chats/delete', userController.delete_user_chat)
+
+//get all followers and following users
+router.get('/:id/getall', userController.get_followers_and_following)
+
 module.exports = router

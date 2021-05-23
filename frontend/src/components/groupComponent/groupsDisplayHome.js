@@ -23,7 +23,6 @@ function GroupsDisplay() {
         }
         
     }, [])
-    console.log(groups)
     return (
         <div style = {{color:"white"}} className  = "groups-main-container container">
             <div className="main-heading">

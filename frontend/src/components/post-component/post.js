@@ -68,14 +68,11 @@ function Post({ posts, loading }) {
           (posts.map(post => (
 
             <div key={post._id} className="post-container container" >
-              {/* <div className="row user-info-row">
+              <div className="row user-info-row">
                 <div className="col-md-6">
-                  <span className="user-heading">User:</span> {post.author}
+                  <span className="user-heading">User:</span> <span>{post.author.username}</span>
                 </div>
-                <div className="col-md-6 created-at">
-                  <pre><strong>Created:</strong>{moment(post.createdAt).fromNow()}</pre>
-                </div>
-              </div> */}
+              </div> 
               <div className="row" style={{ justifyContent: "space-between" }}>
                 <div className="col-md-8">
                   <div className="post-heading-section">
@@ -118,8 +115,6 @@ function Post({ posts, loading }) {
                 <div className="col-md-6 like-icons-row">
                   <Tippy content={`${post.likes.length} ${post.likes.length > 1 ? ('Likes') : ('Like')}`}><Link><FontAwesomeIcon icon={faThumbsUp} onClick={() => checkLike(post._id)} className={`${liked ? ('liked') : ('disliked')}`} /></Link></Tippy>
                   <Tippy content={`${post.comments.length} ${post.comments.length > 1 ? ('Comments') : ('Comment')}`}><Link to={`/user/post/${post._id}`}><FontAwesomeIcon icon={faComment} /></Link></Tippy>
-                  {/*<Link><FontAwesomeIcon icon = {faShare}/></Link>
-                      <Link><FontAwesomeIcon icon = {faSave}/></Link>*/}
                 </div>
 
               </div>

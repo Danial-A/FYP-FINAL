@@ -1,6 +1,7 @@
 const Post = require('../models/postModel');
 const Users = require('../models/usermodel')
 const comments = require('../models/commentsModel')
+const mongoose = require('mongoose')
 const {postValidationSchema} = require('../validation/validationSchema')
 //Retrieve all posts 
 module.exports.get_all = (req,res)=>{
@@ -27,22 +28,30 @@ module.exports.add_post =async (req,res)=>{
     const newPost = new Post({
         title: req.body.title,
         body:req.body.body,
-        author: req.body.author,
+        author: mongoose.Types.ObjectId(req.body.author),
         postType:req.body.postType
     })
     newPost.save()
-    .then(res.json("New post added"))
+    .then(post =>{
+        res.json({
+            post,
+            message:'New Post Added'
+        })
+    })
     .catch(err=> res.status(400).json("Error creating post ",err))
 }
 
 //get post by id
 module.exports.get_post_by_id = (req,res)=>{
-    Post.findById(req.params.id)
-    .then(post=> res.json(post))
-    .catch(err=> res.status(404).json({
-        message:"Post not found",
-        error:err
-    }))
+    Post.findById(req.params.id).populate('comments').populate('author', 'username').exec((error,post)=>{
+        if(error) return res.status(400).json({
+            message:"error finding the post",
+            error
+        })
+        else{
+            res.status(200).json(post)
+        }
+    })
 }
 
 //Like or Unlike post
@@ -68,7 +77,7 @@ module.exports.like_unlike = (req,res)=>{
 //Add comments
 module.exports.post_comment = (req,res)=>{
     const newComment = new comments({
-        userid: req.body.userid,
+        userid: mongoose.Types.ObjectId(req.body.userid),
         body:req.body.body
     })
     newComment.save().then(comment=>{
@@ -82,7 +91,12 @@ module.exports.post_comment = (req,res)=>{
 }
 //Get post comments
 module.exports.get_post_comments = (req,res)=>{
-    Post.findById(req.params.id).populate('comments').sort({createdAt :-1}).exec(function (err,post){
+    Post.findById(req.params.id).populate({
+        path:'comments',
+        populate:{
+            path:'userid'
+        }
+    }).sort({createdAt :-1}).exec(function (err,post){
         if(err) return res.status(400).json(err)
         else{
             return res.json(post.comments)
@@ -122,11 +136,11 @@ module.exports.update_comment = (req,res, next)=>{
 }
 
 //Get all comments on a post
-module.exports.get_all_comments = (req,res)=>{
-    Post.findById(req.params.id)
-    .then(post => res.json(post.comments))
-    .catch(err=> res.status(400).json({Error: err, message:"Error locating the post"}))
-}
+// module.exports.get_all_comments = (req,res)=>{
+//     Post.findById(req.params.id)
+//     .then(post => res.json(post.comments))
+//     .catch(err=> res.status(400).json({Error: err, message:"Error locating the post"}))
+// }
 
 //Get posts for a specific user
 module.exports.user_posts = (req,res)=>{
@@ -175,14 +189,17 @@ module.exports.get_following_users_posts = (req,res)=>{
         })
         else if (users=== null) res.json("User does not exists")
         else{
+           
             const result = users.following
-            let following_posts = result.map(u=> u.userid)
+           
+            let following_posts = result.map(u=> u)
+            
             following_posts = [...following_posts, userid]
             Post.find({
                 'author':{
                     $in:following_posts
                 }
-            }).sort({createdAt:-1}).then(response=> res.json(response))
+            }).populate('author').sort({createdAt:-1}).then(response=> res.json(response))
             .catch(err=> res.status(400).json({
                 err,message:"Error getting posts for user"
             }))

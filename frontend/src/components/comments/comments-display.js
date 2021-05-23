@@ -26,7 +26,7 @@ function DisplayComments(props) {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="post-heading-section">
-                                    <p> <b>{comment.userid}</b></p>
+                                    <p> <b>{comment.userid.username}</b></p>
                                 </div>
                             </div>
                             <div className="col-md-4 mm">

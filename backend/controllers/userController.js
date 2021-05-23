@@ -4,6 +4,7 @@ const {userLoginValidation,userRegisterValidation} = require('../validation/vali
 const bcrypt = require('bcryptjs')
 const jwt  = require('jsonwebtoken');
 const e = require('express');
+const mongoose = require('mongoose')
 
 module.exports.get_all = (req,res)=>{
     User.find({}, (err,users)=>{
@@ -82,7 +83,6 @@ module.exports.user_login = async (req,res)=>{
 //Following route
 module.exports.following_follower = (req,res)=>{
     const userid = req.body.userid;
-    const newFollowing = {userid}
     User.findById(req.params.id)
     .then(user=>{
         const user_found = user.following.filter(u => u.userid === userid)
@@ -92,11 +92,11 @@ module.exports.following_follower = (req,res)=>{
                 if(targetUser === null) res.json("No user found")
 
                 else {
-                    user.following.push(newFollowing)
+                    user.following.push(mongoose.Types.ObjectId(userid))
                     user.save()
                     .then(()=>{
-                        const newFollower = {userid : req.params.id}
-                        targetUser.followers.push(newFollower);
+                        const newFollower = req.params.id
+                        targetUser.followers.push(mongoose.Types.ObjectId(newFollower));
                         targetUser.save()
                         .then(()=>res.json("User added to followers and following"))
                         .catch(err=> res.json({error: err, message:"Error adding user to followers"}))
@@ -128,9 +128,16 @@ module.exports.search_by_username = (req,res)=>{
 
 //Get User by id 
 module.exports._search_by_id = (req,res)=>{
-    User.findById(req.params.id)
-    .then(user=> res.send(user))
-    .catch(err=> res.json(err))
+    User.findById(req.params.id).populate('followers following').exec(function(error, user){
+        if(error) res.status(400).json({
+            message:"Error finding the user",
+            error
+        })
+        else{
+            return res.json(user)
+        }
+    })
+    
 }
 
 //Delete user account
@@ -162,32 +169,45 @@ module.exports.update_user_information = (req,res)=>{
    
 }
 
-//Get All followers
-module.exports.get_followers = (req,res)=>{
-    User.findById(req.params.id, "followers", (err,result)=>{
-        if(err) res.status(400).json({
-            message:"Error retrieving the followers",
-            error:err
+//get all followers and follwing
+module.exports.get_followers_and_following = (req,res)=>{
+    User.findById(req.params.id, "followers following").populate('followers following').exec((err, users)=>{
+        if(err) return res.status(400).json({
+            message:"Error getting all the users",
+            err
         })
         else{
-            const userIdArray = result.followers.map(user=> user.userid) 
-            User.find({
-                '_id':{
-                    $in:userIdArray
-                }
-            }).then(result=>{
-                res.json(result)
-            }).catch(err=>{
-                res.status(400).json({
-                    error:err,
-                    message:"Error finding the followers for this user"
-                })
-            })
-            
+            res.json(users)
         }
     })
-    
 }
+
+//Get All followers
+// module.exports.get_followers = (req,res)=>{
+//     User.findById(req.params.id, "followers", (err,result)=>{
+//         if(err) res.status(400).json({
+//             message:"Error retrieving the followers",
+//             error:err
+//         })
+//         else{
+//             const userIdArray = result.followers.map(user=> user.userid) 
+//             User.find({
+//                 '_id':{
+//                     $in:userIdArray
+//                 }
+//             }).then(result=>{
+//                 res.json(result)
+//             }).catch(err=>{
+//                 res.status(400).json({
+//                     error:err,
+//                     message:"Error finding the followers for this user"
+//                 })
+//             })
+            
+//         }
+//     })
+    
+// }
 //Get all following
 module.exports.get_following = (req,res)=>{
     User.findById(req.params.id, "following", async (err,result)=>{
@@ -196,7 +216,7 @@ module.exports.get_following = (req,res)=>{
             error:err
         })
         else{
-            const userIdArray =await result.following.map(user=> user.userid) 
+            const userIdArray =await result.following.map(user=> user) 
             User.find({
                 '_id':{
                     $in:userIdArray

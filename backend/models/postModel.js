@@ -13,9 +13,9 @@ const postModel = new Schema({
         min:80
     },
     author: {
-        type:String,
-        required:true,
-        trim:true
+        type:mongoose.Types.ObjectId,
+        ref:'users',
+        required:true
     },
     comments:[
         {

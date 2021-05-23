@@ -3,9 +3,9 @@ const Schema = mongoose.Schema
 
 const CommentSchema = new Schema({
     userid:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required:true,
-        trim:true
+        ref:'users'
     },
     body:{
         type:String,

@@ -13,38 +13,32 @@ function ProfileInformation() {
     const [following, setFollowing] = useState([])
     const [posts, setPosts] = useState([])
 
-    //Modal
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false); 
-    const handleShow = () => setShow(true);
-
+    
     const userid = localStorage.getItem('userid')
     useEffect(()=>{
         //Get user posts
         axios.post('http://localhost:8080/posts/user/posts', {author: localStorage.getItem('username')})
         .then(posts=> {
-            // console.log(posts)
             setPosts(posts)
         })
         .catch(err => console.log(err))
 
-        //get following
-        axios.get(`http://localhost:8080/users/${userid}/following`)
+        //get following and followers
+        axios.get(`http://localhost:8080/users/${userid}/getall`)
         .then(res=> {
-            setFollowing(res.data)
+            setFollowers(res.data.followers)
+            setFollowing(res.data.following)
         })
         .catch(err=> console.log(err))
 
         //Get followers
-        axios.get(`http://localhost:8080/users/${userid}/followers`)
-        .then(res=> {
-            setFollowers(res.data)
-        })
-        .catch(err=> console.log(err))
+        // axios.get(`http://localhost:8080/users/${userid}/followers`)
+        // .then(res=> {
+        //     setFollowers(res.data)
+        // })
+        // .catch(err=> console.log(err))
     },[])
-
-   
-
+    console.log(following)
     return (
         <div className="user-info">
             <div className="user-heading"> 
@@ -52,7 +46,7 @@ function ProfileInformation() {
             </div>
             <div className="information-section">
                 <ul>
-                    <li><Link><FontAwesomeIcon icon = {faEdit} className = "icon"/>Posts {(posts.length)} <Badge variant="info">5</Badge></Link></li>
+                    <li><Link><FontAwesomeIcon icon = {faEdit} className = "icon"/>Posts <Badge variant="info">{(posts.length)}</Badge></Link></li>
                     <li><Link><FontAwesomeIcon icon = {faThumbsUp} className = "icon"/>Likes <Badge variant="info">7</Badge></Link></li>
                 </ul>
                 <div className="followers-following-section">
@@ -83,21 +77,7 @@ function ProfileInformation() {
                     </Tabs>
                 </div>
             </div>
-            {/*Modal Section*/}
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-                <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={handleClose}>
-                    Save Changes
-                </Button>
-                </Modal.Footer>
-            </Modal>
+            
         </div>
     )
 }

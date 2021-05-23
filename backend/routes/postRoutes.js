@@ -27,11 +27,13 @@ router.post('/:id/comment/update', postController.update_comment)
 //Get All comments on a post
 router.get("/:id/comments", postController.get_post_comments)
 //Get post by ID
-router.get('/post/:id', postController.get_post_by_id)
+router.get('/:id', postController.get_post_by_id)
 //Find user posts
 router.post('/user/posts', postController.user_posts)
 //get following users posts
 router.get('/:user/get/posts',postController.get_following_users_posts)
+
+
 
 
 module.exports = router
