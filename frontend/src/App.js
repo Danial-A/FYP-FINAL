@@ -7,12 +7,11 @@ import SignUp from './components/sign-up/signup';
 import UserProfile from './pages/UserProfile';
 import UserHomePage from './pages/UserHomePage';
 import GroupPage from './components/groupComponent/GroupPage'
-import YoutubeSearchPage from './pages/YoutubeSearchPage'
 import PostPage from './pages/postPage'
 import Messenger from './pages/messenger'
 import EditorPage from './pages/editorPage';
 import WhiteBoard from './pages/WhiteBoard'
-
+import Youtube from './components/youtube/Youtube'
 
 
 function App() {
@@ -24,12 +23,14 @@ function App() {
       <Route exact path = "/profile" component = {UserProfile}/>
       <Route exact path = "/home" component = {UserHomePage}/>
       <Route exact path = "/group/:id" component = {GroupPage}/>
-      <Route exact path = "/yt/search" component = {YoutubeSearchPage}/>
       <Route exact path = "/user/post/:id" component = {PostPage}/>
       <Route exact path = "/messenger" component = {Messenger}/>
       <Route exact path = "/messenger/:id" component = {Messenger}/>
       <Route exact path = "/playground" component = {EditorPage}/>
+      <Route exact path = "/playground/:id" component = {EditorPage}/>
       <Route exact path = "/whiteboard" component = {WhiteBoard}/>
+      <Route exact path = "/youtube" component = {Youtube}/>
+
     </Switch>
   );
 }

@@ -1,6 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, useeffect} from 'react'
 import '../components/editor-components/editor.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import {useParams} from 'react-router-dom'
 import NavigationBar from '../components/navigation-bar/userNavbar'
 import Footer from '../components/footer-section/footer'
 import Editor from "@monaco-editor/react";
@@ -13,7 +14,6 @@ function EditorPage() {
     const [html,setHtml] = useState('<!-- Write your html here -->')
     const [css,setCss] = useState('/* Write your css here */')
     const [js,setJS] = useState('//Write your javascript here')
-
     const [tabIndex, setTabIndex] = useState(0);
     const [theme, setTheme] = useState('vs-dark')
     const toggleTheme = () => {
@@ -23,8 +23,8 @@ function EditorPage() {
             setTheme('light')
         }
     }
-
-
+    var {id} = useParams()
+    console.log(id)
     return (
         <div>
             <NavigationBar />
@@ -75,7 +75,7 @@ function EditorPage() {
                             <div className="col-md-6">
                                 <div className="row">
                                     <div className="col video-section">
-                                        <VideoSection />
+                                        <VideoSection video = {id}/>
                                     </div>
 
                                 </div>

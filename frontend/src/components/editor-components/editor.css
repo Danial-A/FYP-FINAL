@@ -3,6 +3,7 @@
     background: white;
     margin-left: 1vw;
     margin-right: 1vw;
+    padding: 0;
 }
 .output-section{
     height: 42.35vh;
@@ -10,4 +11,7 @@
     margin-top: 1vh;
     margin-left: 1vw;
     margin-right: 1vw;
+}
+.video-iframe{
+    height: inherit;
 }

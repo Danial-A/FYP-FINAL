@@ -43,7 +43,7 @@ function UserProfile() {
     const paginate = (pageNumber)=>{
         setCurrentPage(pageNumber)
     }
-
+    console.log(posts)
     return (
         <div style = {{backgroundColor: '#1c2237', height:"auto"}}>
             <NavigationBar/>

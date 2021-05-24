@@ -15,20 +15,19 @@ import '../components/post-component/post.css'
 import 'tippy.js/dist/tippy.css'
 
 function PostPage(props) {
-  // console.log(props.match.params.id)
   const [post, setPost] = useState({})
   const [comments, setComments] = useState([])
   const [likes, setlikes] = useState([])
   useEffect(() => {
-    axios.get(`http://localhost:8080/posts/post/${props.match.params.id}`)
+    axios.get(`http://localhost:8080/posts/${props.match.params.id}`)
       .then(res => {
-        console.log(res.data.author)
+        console.log(res.data)
         setPost(res.data)
-        // setComments(res.data.comments)
-        // setlikes(res.data.likes)
-      })
-      .catch(err => console.log(err))
+        setComments(res.data.comments)
+        setlikes(res.data.likes)
+      }).catch(err => console.log("error fetching the post ", err))
   }, [])
+  console.log(post)
   return (
     <div>
       <NavigationBar />

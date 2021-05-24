@@ -2,7 +2,8 @@ const Post = require('../models/postModel');
 const Users = require('../models/usermodel')
 const comments = require('../models/commentsModel')
 const mongoose = require('mongoose')
-const {postValidationSchema} = require('../validation/validationSchema')
+const {postValidationSchema} = require('../validation/validationSchema');
+
 //Retrieve all posts 
 module.exports.get_all = (req,res)=>{
     Post.find().sort({createdAt :-1}).exec((err,posts)=>{
@@ -56,18 +57,25 @@ module.exports.get_post_by_id = (req,res)=>{
 
 //Like or Unlike post
 module.exports.like_unlike = (req,res)=>{
-    const username = req.body.username
-    const newLike = {username}
+    const userid = req.body.userid
     Post.findById(req.params.id)
     .then(post=>{
-        const like_found = post.likes.filter(u=> u.username === username)
+        const string_likes = post.likes.map( id => id.toString())
+        const like_found = string_likes.filter(id => {
+            id != userid
+        })
         if(like_found.length === 0){
-            post.likes.push(newLike)
-            post.save()
-            res.json('liked')
+            post.likes.push(mongoose.Types.ObjectId(userid))
+            console.log(typeof(string_likes[1]))
+            //post.save()
+            res.json({
+                likes:string_likes[1],
+                user:userid
+            })
         }else{
-            post.likes.id(like_found[0]._id).remove()
-            post.save()
+            const filtered_likes = post.likes.filter(m=> m != userid)
+            post.likes = filtered_likes
+            //post.save()
             res.json("unliked")
         }
     })

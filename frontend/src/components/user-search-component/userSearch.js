@@ -36,7 +36,7 @@ function UserSearch() {
                 autoComplete = "off"
                 />
             <div className="input-group-prepend">
-            <button type = "submit" className = "button-search" onClick = {(e)=>{
+            <button type = "submit" className = "btn btn-danger" onClick = {(e)=>{
                 e.preventDefault()
             }}>Search</button>
             </div>
