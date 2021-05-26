@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
+import Conversation from '../conversations/conversation'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './messenger.css'
 function ChatSidePanel() {
@@ -10,10 +11,12 @@ function ChatSidePanel() {
     const [users,setUsers] = useState([])
     const [filteredUsers,setFileteredUsers] = useState([])
     const [searchText , setSearchText] = useState('')
+
     useEffect(()=>{
-        axios.get(`http://localhost:8080/users/${uid}/chats`)
+        
+        axios.get(`http://localhost:8080/chats/${uid}/chats`)
         .then(response=>{
-            setChats(response.data.chats)
+            setChats(response.data)
         }).catch(err=>{
             console.log(err)
         })
@@ -21,8 +24,8 @@ function ChatSidePanel() {
     useEffect(() => {
       const getUsers =async ()=>{
         try{
-            const response =await axios.get(`http://localhost:8080/users/${uid}/following`)
-            setUsers(response.data)
+            const response =await axios.get(`http://localhost:8080/users/${uid}/getall`)
+            setUsers(response.data.following)
         }catch(err){
             console.log(err)
         }
@@ -36,17 +39,12 @@ function ChatSidePanel() {
         }
     },[searchText])
     const createChat =async (userid)=>{
-        const recepientUser = userid
-        const requester = localStorage.getItem('userid')
-        await axios.post(`http://localhost:8080/chats/create`, {requester,recepientUser})
-        .then(async response=>{
-            const chatid = response.data.chatid
-            await axios.post(`http://localhost:8080/users/${uid}/chats/add`, {chatid})
-            .then(res=>console.log(res))
-            .catch(err=>console.log(err))
-        })
+        const recieverId = userid
+        const senderId = localStorage.getItem('userid')
+        await axios.post(`http://localhost:8080/chats/create`, {recieverId,senderId})
+        .then(res=>console.log(res))
+        .catch(err=> console.log(err))
     }
-    
     return (
         <div className = "side-panel-main">
             <div className="title">
@@ -54,9 +52,9 @@ function ChatSidePanel() {
             </div>
             <div className="chat-list mt-3">
                 <ul>
-                    {chats.length > 0 ? (
+                    {chats?.length > 0 ? (
                         chats.map(chat=>(
-                            <Link to = {`/messenger/${chat.chatid}`} className="chat-info"><li>{chat.chatid}</li></Link>
+                            <Conversation conversation = {chat}/>
                         ))
                     ) : <div>No chats yet</div>
                 }

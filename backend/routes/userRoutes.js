@@ -7,14 +7,16 @@ router.get('/',userController.get_all)
 router.post('/register', userController.add_new_user)
 //User login registration
 router.post('/login', userController.user_login)
-//Adding/Removing follower follower
+//Adding follower follower
 router.post("/follower/:id", userController.following_follower)
+//Remove follower
+router.post("/follower/:id/remove", userController.remove_follower)
 //delete all users
 router.post('/nuke', userController.nuke)
 //Find by username
 router.get('/username', userController.search_by_username)
 //Find user by id
-router.get('/:id', userController._search_by_id)
+router.get('/:id', userController.search_by_id)
 //Delete user account
 router.delete('/:id/delete', userController.delete_user_account)
 //Get All followers

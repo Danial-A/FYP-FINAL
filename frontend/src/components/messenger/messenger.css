@@ -87,3 +87,13 @@ a.chat-info:hover{
 padding-top: 5px;
 padding-bottom: 5px;
 }
+
+.float-element{
+    float: right;
+}
+
+.message-area{
+    height: 500px;
+    position: relative;
+    overflow-y: scroll
+}

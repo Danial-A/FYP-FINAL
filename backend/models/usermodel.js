@@ -40,13 +40,8 @@ const userSchema = new Schema({
     },
     chats:[
         {
-            chatid:{
-                type:String,
-                trim:true,
-                required:true,
-                unique:true,
-                sparse:true
-            }
+            type:mongoose.Types.ObjectId,
+            ref:'PrivateChats'
         }
     ]
     ,followers:[

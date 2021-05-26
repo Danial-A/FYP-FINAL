@@ -85,7 +85,7 @@ module.exports.following_follower = (req,res)=>{
     const userid = req.body.userid;
     User.findById(req.params.id)
     .then(user=>{
-        const user_found = user.following.filter(u => u.userid === userid)
+        const user_found = user.following.filter(u => u.toString() === userid)
         if(user_found.length === 0) {
             User.findOne({"_id":userid}, (err,targetUser)=>{
                 if(err) res.status(400).json({error: err})
@@ -99,7 +99,7 @@ module.exports.following_follower = (req,res)=>{
                         targetUser.followers.push(mongoose.Types.ObjectId(newFollower));
                         targetUser.save()
                         .then(()=>res.json("User added to followers and following"))
-                        .catch(err=> res.json({error: err, message:"Error adding user to followers"}))
+                        .catch(err=> res.status(400).json({error: err, message:"Error adding user to followers"}))
                         
                     }).catch(err=> res.status(400).json({
                         err,
@@ -110,6 +110,40 @@ module.exports.following_follower = (req,res)=>{
         }
         else {
             res.json(`You are already following ${userid}`)
+        }
+    })
+    .catch(err=>{res.status(400).json("Error: "+err)})
+}
+
+
+//remove follower
+module.exports.remove_follower = (req,res)=>{
+    const userid = req.body.userid;
+    User.findById(req.params.id)
+    .then(user=>{
+        const user_found = user.followers.filter(u => u.toString() === userid)
+        if(user_found.length !== 0){
+            User.findOne({"_id":userid}, (err,targetUser)=>{
+                if(err) res.status(400).json({error: err})
+                if(targetUser === null) res.json("No user found")
+                else{
+                    user.followers.remove(mongoose.Types.ObjectId(userid))
+                    user.save()
+                    .then(()=>{
+                        targetUser.following.remove(mongoose.Types.ObjectId(req.params.id))
+                        targetUser.save()
+                        .then(res.json("User removed from follower and following list"))
+                        .catch(err=> res.status(400).json({error: err, message:"Error removing user from following"})) 
+                    }).catch(err=>{
+                        res.status(400).json({
+                            err,
+                            message:"Error removing user from followers"
+                        })
+                    })
+                }
+            })
+        }else{
+            res.json("This user is not your follower")
         }
     })
     .catch(err=>{res.status(400).json("Error: "+err)})
@@ -127,8 +161,8 @@ module.exports.search_by_username = (req,res)=>{
 }
 
 //Get User by id 
-module.exports._search_by_id = (req,res)=>{
-    User.findById(req.params.id).populate('followers following').exec(function(error, user){
+module.exports.search_by_id = (req,res)=>{
+    User.findById(req.params.id).populate('followers following', 'username firstname lastname emailid dob').exec(function(error, user){
         if(error) res.status(400).json({
             message:"Error finding the user",
             error
@@ -137,7 +171,6 @@ module.exports._search_by_id = (req,res)=>{
             return res.json(user)
         }
     })
-    
 }
 
 //Delete user account
@@ -171,7 +204,7 @@ module.exports.update_user_information = (req,res)=>{
 
 //get all followers and follwing
 module.exports.get_followers_and_following = (req,res)=>{
-    User.findById(req.params.id, "followers following").populate('followers following').exec((err, users)=>{
+    User.findById(req.params.id, "followers following").populate('followers following', "_id username firstname lastname dob emailid").exec((err, users)=>{
         if(err) return res.status(400).json({
             message:"Error getting all the users",
             err

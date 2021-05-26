@@ -73,9 +73,8 @@ module.exports.like_unlike = (req,res)=>{
                 user:userid
             })
         }else{
-            const filtered_likes = post.likes.filter(m=> m != userid)
-            post.likes = filtered_likes
-            //post.save()
+            post.likes.remove(mongoose.Types.ObjectId(userid))
+            post.save()
             res.json("unliked")
         }
     })
@@ -114,18 +113,18 @@ module.exports.get_post_comments = (req,res)=>{
 
 //Delete Comment
 module.exports.delete_comment = (req,res)=>{
-    Post.findById(req.params.id)
-    .then(post=>{
-        Post.findOne({"comments._id":req.body.commentID},"comments.$", (err,result)=>{
-            if(err) res.status(400).json("Error finding user ",err)
-            
-            post.comments.id(result.comments[0]._id).remove()
-            post.save()
-            .then(res.json("Comment Deleted"))
-            .catch(err=> {res.status(400).json("Error deleting the comment..", err)})
+    comments.findByIdAndDelete(req.params.id, (err,comment)=>{
+        if(err) return res.status(400).json({
+            message:"error deleting the comment",
+            err
         })
+        else{
+            res.json({
+                message:"Comment Deleted",
+                comment
+            })
+        }
     })
-    .catch(err=> res.status(400).json("error finding the post.",err))
 }
 
 //Update comment
@@ -141,6 +140,19 @@ module.exports.update_comment = (req,res, next)=>{
     })
     .then(post=> res.send(post))
     .catch(err=> res.status(404).json("Error finding the post ",err))
+}
+
+//comments nuke
+module.exports.comments_nuke = (req,res)=>{
+    comments.deleteMany({}, (err,comments)=>{
+        if(err) return res.status(400).json({
+            error:err,
+            message:"Unable to delete comments"
+        })
+        else{
+            res.json("Comments nuke deployed")
+        }
+    })
 }
 
 //Get all comments on a post
@@ -214,3 +226,4 @@ module.exports.get_following_users_posts = (req,res)=>{
         }
     })
 }
+

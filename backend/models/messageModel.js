@@ -2,17 +2,15 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema
 
 const messageSchema = new schema({
+    chatid:{
+        type:mongoose.Types.ObjectId,
+        ref:'PrivateChats'
+    },
     sender:{
-        type:String,
-        required:"sender is required",
-        trim:true,
+        type:mongoose.Types.ObjectId,
+        ref:'users'
     },
-    roomid:{
-        type:String,
-        required:true,
-        trim:true
-    },
-    content:{
+    text:{
         type:String,
         required:true
     }

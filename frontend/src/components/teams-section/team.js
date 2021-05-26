@@ -14,7 +14,7 @@ function TeamSection() {
                 <Col md ={6} className = "ml-auto card-column">
                     <Card style={{ width: '18rem' }} className = "card-main">
                     <div>
-                        <Card.Img variant="top" src="images/Dp.svg" className = "card-image" />
+                        <Card.Img variant="top" src="images/danial.jpg" className = "card-image" />
                     </div>
                     <Card.Body>
                     <Card.Title>Danial Ahmad</Card.Title>
@@ -38,7 +38,7 @@ function TeamSection() {
                 <Col md ={6} className = "ml-auto card-column">
                     <Card style={{ width: '18rem' }} className = "card-main">
                     <div>
-                        <Card.Img variant="top" src="images/Dp.svg" className = "card-image" />
+                        <Card.Img variant="top" src="images/abbasi.jpeg" className = "card-image" />
                     </div>
                     <Card.Body>
                     <Card.Title>Awais Bin Saqib</Card.Title>

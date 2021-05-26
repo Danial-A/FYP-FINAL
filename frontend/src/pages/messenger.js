@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import MainChatArea from '../components/messenger/mainchat-area' 
 import SideChatPanel from '../components/messenger/sidechat-panel' 
 import NavigationBar from '../components/navigation-bar/userNavbar'
+import Footer from '../components/footer-section/footer'
 function Messenger({match}) {
     const uid = localStorage.getItem('userid')
     const [user,setUser] = useState({})
@@ -24,7 +25,7 @@ function Messenger({match}) {
     return (
         <div className = "container-fluid ">
         <NavigationBar/>
-        <div className="container mt-5">
+        <div className="container mt-5" style = {{marginBottom:"6vh"}}>
             <div className="row">
                 <div className="col-md-4">
                     <SideChatPanel />
@@ -34,6 +35,7 @@ function Messenger({match}) {
                 </div>
             </div>
         </div>
+        <Footer/>
         </div>
     )
 }

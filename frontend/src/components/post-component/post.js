@@ -19,7 +19,10 @@ function Post({ posts, loading }) {
   //Handle close/open Modal
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true)
+    editPost()
+  }
 
 
   const checkLike = (postid) => {
@@ -56,17 +59,50 @@ function Post({ posts, loading }) {
 
   }
 
+  const editPost = ()=>{
+    return(
+      <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+        <Modal.Title>Edit Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Title</label>
+            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter title" />
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Body</label>
+            <textarea class="form-control" id="postbody" placeholder="Body" />
+          </div>
+          <Button type="submit" variant="danger" >
+            Save Changes
+          </Button>
+          </form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="warning" onClick={handleClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        
+      </>
+    )
+  }
+
   if (loading) {
     return <h2>Loading...</h2>
   }
 
-
   return (
     <div className="container-fluid posts-section">
+    
       {
         posts.length > 0 ?
           (posts.map(post => (
-
+            
             <div key={post._id} className="post-container container" >
               <div className="row user-info-row">
                 <div className="col-md-6">
@@ -83,24 +119,28 @@ function Post({ posts, loading }) {
 
                 <pre><strong>Created:</strong>{moment(post.createdAt).fromNow()}</pre>
 
-
+                {console.log(post.author)}
                 </div>
                 <div className="col-md-1">
-
-                  {post.author === localStorage.getItem('userid') ?
+                  {post.author._id?.toString() === localStorage.getItem('userid') ?
                     <div> 
-                 
+                    
                           <DropdownButton
                             title=""
                             variant="light"
                             id="dropdown-custom-components"
                           >
-                            <Dropdown.Item eventKey="1"><FontAwesomeIcon icon={faTrash} onClick={() => DeletePost(post._id)} /> Delete</Dropdown.Item>
-                            <Dropdown.Item eventKey="2"><FontAwesomeIcon icon={faEdit} onClick={handleShow} />Edit</Dropdown.Item>
+                            <Dropdown.Item eventKey="1" onClick={() => DeletePost(post._id)}><FontAwesomeIcon icon={faTrash}  /> Delete</Dropdown.Item>
+                            <Dropdown.Item eventKey="2" onClick={(e)=> {
+                              e.preventDefault()
+                              handleShow()
+                            }} ><FontAwesomeIcon icon={faEdit} />Edit</Dropdown.Item>
+                            
                           </DropdownButton>
+                          
                     </div>
                     :
-                    <div></div>
+                   <div></div>
                   }
                 </div>
               </div>
@@ -123,31 +163,7 @@ function Post({ posts, loading }) {
           ))
           ) : <div className="container post-container" style={{ color: "crimson" }}>NO POSTS TO SHOW</div>
       }
-      {<Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Post</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Title</label>
-              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter title" />
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Body</label>
-              <textarea class="form-control" id="postbody" placeholder="Body" />
-            </div>
-            <Button type="submit" variant="danger" >
-              Save Changes
-                </Button>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="warning" onClick={handleClose}>
-            Close
-              </Button>
-        </Modal.Footer>
-      </Modal>}
+     
     </div>
   )
 }

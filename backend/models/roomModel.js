@@ -11,18 +11,12 @@ const roomSchema = new schema({
     },
     participants:[
         {
-            userid:{
-                type:String,
-                required:true,
-                unique:true
-            }
+            type: mongoose.Types.ObjectId,
+            ref:'users'
         }
     ],
     messages:[{
-        messageid:{
-            type:String,
-            unique:true
-        }
+        type:mongoose.Types.ObjectId
     }]
 },{
     timestamps:true

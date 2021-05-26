@@ -3,8 +3,10 @@ import {Modal, Button} from 'react-bootstrap'
 import '../../pages/UserProfile.css'
 import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faThumbsUp} from '@fortawesome/free-solid-svg-icons'
+import UserCard from './usercard'
 import {Link } from 'react-router-dom'
 import axios from 'axios'
+import FollowCard from '../follow-card/followcard'
 import {Tabs, Tab, Badge} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -13,6 +15,11 @@ function ProfileInformation() {
     const [following, setFollowing] = useState([])
     const [posts, setPosts] = useState([])
 
+
+    //Users modal
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     
     const userid = localStorage.getItem('userid')
     useEffect(()=>{
@@ -30,15 +37,9 @@ function ProfileInformation() {
             setFollowing(res.data.following)
         })
         .catch(err=> console.log(err))
-
-        //Get followers
-        // axios.get(`http://localhost:8080/users/${userid}/followers`)
-        // .then(res=> {
-        //     setFollowers(res.data)
-        // })
-        // .catch(err=> console.log(err))
     },[])
-    console.log(following)
+
+ 
     return (
         <div className="user-info">
             <div className="user-heading"> 
@@ -56,7 +57,7 @@ function ProfileInformation() {
                         {
                             followers.length > 0 ? (
                                 followers.map(f=>(
-                                    <li style = {{marginLeft :"20px"}}><Link>{f.firstname} {f.lastname}</Link></li>
+                                    <FollowCard user = {f}/>
                                 ))
                             ) : <div className = "no-followers">You do not have any followers :(</div>
                         }
@@ -68,7 +69,7 @@ function ProfileInformation() {
                             {
                                 following.length > 0 ? (
                                     following.map(f=>(
-                                        <li style = {{marginLeft :"20px"}}><Link>{f.firstname} {f.lastname}</Link></li>
+                                        <FollowCard user = {f}/>
                                     ))
                                 ) : <div className = "no-followers">You are not following anyone </div>
                             }
@@ -77,6 +78,12 @@ function ProfileInformation() {
                     </Tabs>
                 </div>
             </div>
+            
+            <>
+                <Modal>
+                    <UserCard/>
+                </Modal>
+            </>
             
         </div>
     )

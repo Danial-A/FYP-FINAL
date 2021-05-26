@@ -8,6 +8,9 @@ router.post('/create/',privateChatController.create_new_chat)
 //get all rooms
 router.get('/', privateChatController.get_all_chats)
 
+//get all chats for a user
+router.get('/:id/chats', privateChatController.get_all_chats_for_a_user)
+
 //delete all chats
 router.delete('/delete', privateChatController.chat_nuke)
 //get chat by id
@@ -21,4 +24,6 @@ router.delete('/:id/delete', privateChatController.delete_chat_by_id)
 
 //delete all
 router.delete('/nuke', privateChatController.delete_all_chats)
+//delete all messages
+router.delete('/messages/nuke', privateChatController.delete_all_messages)
 module.exports = router

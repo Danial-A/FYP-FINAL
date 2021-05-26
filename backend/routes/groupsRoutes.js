@@ -26,7 +26,7 @@ router.post('/:id/members/add', GroupController.add_members)
 router.post('/:id/members/remove', GroupController.remove_member)
 
 //get all members and admins
-router.get('/:id/members/all', GroupController.get_all_members_and_admins)
+//router.get('/:id/members/all', GroupController.get_all_members_and_admins)
 
 router.post('/nuke', GroupController.nuke)
 module.exports = router

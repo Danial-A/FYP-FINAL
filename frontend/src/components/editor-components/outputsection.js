@@ -7,9 +7,9 @@ function OutputSection(props) {
         setkey(key+1)
     }, 3000);
     return (
-        <div>
-            <iframe srcDoc={combinedCode} frameborder="0" ></iframe>
-        </div>
+        <>
+            <iframe srcDoc={combinedCode} frameborder="0" width = "100%" height = "100%"></iframe>
+        </>
     )
 }
 

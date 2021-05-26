@@ -17,6 +17,18 @@ function DisplayComments(props) {
             console.log(err)
         })
     })
+
+    const deleteComment = (id) =>{
+        axios.post(`http://localhost:8080/posts/${id}/comment/delete`)
+        .then(res=>{
+            console.log(res)
+            window.alert("Comment Deleted");
+        })
+        .catch(err=> console.log(err))
+
+        
+    }
+
     return (
         <div className="display-comments hs">
             <p> <b>Comments: </b> </p>
@@ -34,17 +46,19 @@ function DisplayComments(props) {
                             </div>
                             <div className="col-md-2 mm">
                             <small>
-                                <DropdownButton
+                            {console.log(typeof(comment.userid))}
+                                    <DropdownButton
 
                                     title=""
                                     variant="light"
                                     id="dropdown-custom-components"
                                 >
-                                    <Dropdown.Item eventKey="1"><FontAwesomeIcon icon={faTrash} /> Delete</Dropdown.Item>
+                                    <Dropdown.Item eventKey="1"><FontAwesomeIcon icon={faTrash} onClick = {()=> deleteComment(comment._id)}/> Delete</Dropdown.Item>
                                     <Dropdown.Item eventKey="2"><FontAwesomeIcon icon={faEdit} />Edit</Dropdown.Item>
 
-                                </DropdownButton>
-                                </small>
+                                </DropdownButton> 
+                               
+                            </small>
                             </div>
 
 

@@ -1,6 +1,7 @@
 const PrivateChat = require('../models/privateChatModel')
 const Users = require('../models/usermodel')
 const message = require('../models/messageModel')
+const mongoose = require('mongoose')
 //get all chats
 module.exports.get_all_chats = (req,res)=>{
     PrivateChat.find()
@@ -13,91 +14,75 @@ module.exports.get_all_chats = (req,res)=>{
 
 //Create new Private Chat
 module.exports.create_new_chat = (req,res)=>{
-    const requester = req.body.requester
-    const recepientUser = req.body.recepientUser
-    PrivateChat.findOne({"recepientUser":recepientUser, "requester":requester})
-    .then(chat=> {
-        if(chat == null){
-            const newChat = new PrivateChat ({
-                recepientUser,requester
+    const participants = [mongoose.Types.ObjectId(req.body.senderId), mongoose.Types.ObjectId(req.body.recieverId)]
+    PrivateChat.find({'participants': {
+        '$all': participants
+    }}, (error,chat)=>{
+        if(error) res.status(400).json({
+            error,
+            message:"Error finding chats"
+        })
+        if(chat.length !== 0) res.json("Chat already exists")
+        else{
+              const newConversation = new PrivateChat({
+                participants
             })
-            newChat.save()
-            .then(response=>{
-                const chatid = {chatid:response._id}
-                Users.findById(requester,"chats",(err,user)=>{
-                    if(err) return res.status(400).json({
-                        err,
-                        message:"Error finding requester"
-                    })
-                    else{
-                        user.chats.push(chatid)
-                        user.save()
-                        .then(Response=>{
-                            Users.findById(recepientUser,"chats",(err,seconduser)=>{
-                                if(err) return res.status(400).json({
-                                    err,
-                                    message:"Error finding requester"
-                                })
-                                else{
-                                    seconduser.chats.push(chatid)
-                                    seconduser.save()
-                                    .then(res.json({
-                                        chatid,
-                                        message:"New chat created and added for both users",
-                                        seconduser
-                                    })).catch(err=>res.status(400).json({
-                                        err,
-                                        message:"Error saving chat for recepient"
-                                    }))
-                                }
-                            })
-                        }).catch(err=> res.status(400).json({
-                            err,
-                            message:"Error adding chat for requester"
-                        }))
-                    }
-                })
-                
-            }).catch(err=> res.status(400).json({
+            newConversation.save()
+            .then(chat => res.json({
+                message:"New Conversation Created",
+                chat
+            }))
+            .catch(err=> res.status(400).json({
                 err,
-                message:"Error creating chat"
+                message:"Error creating the chat"
             }))
         }
-        else if(chat !== null){
-            res.json("Chat with the user already exists")
+    })
+}
+
+//get all chats for a user
+module.exports.get_all_chats_for_a_user = (req,res)=>{
+    PrivateChat.find({'participants': mongoose.Types.ObjectId(req.params.id)}).exec((err,chats)=>{
+        if(err) res.status(400).json({
+            message:"Error retrieving chats",
+            error:err
+        })
+        else{
+            res.json(chats)
         }
     })
-    .catch(err=>res.json(err))  
 }
 
 //new message in chat
 module.exports.new_chat_message = (req,res)=>{
-    const {sender,reciever,content} = req.body
-    const chatid = req.params.id
-    PrivateChat.findById(chatid)
-    .then(chat=> {
-        const newMessage = new message({
-            sender,reciever,content,roomid:chatid
-        })
-        newMessage.save()
-        .then(message=>{
-             chat.messages.push({messageid : message._id})
-             chat.save()
-             .then(r=>res.json({
-                messages: r.messages,
-                message:"New message in chat"
-            })).catch(err=> res.status(400).json({
-                err,message:"Error adding new message to chat"
-            }))
-        }).catch(err=> res.status(400).json({
-            err,
-            message:"Error saving the message"
-        })) 
+    const newMessage = new message({
+        chatid: mongoose.Types.ObjectId(req.params.id),
+        sender: mongoose.Types.ObjectId(req.body.sender),
+        text:req.body.text
     })
-    .catch(err=> res.status(400).json({
-        err,
-        message:"Error finding chat"
-    }))
+    newMessage.save()
+    .then(message => {
+        PrivateChat.findById(req.params.id, (err,chat)=>{
+            if(err) res.status(400).json({
+                message:"Error retrieving chat",
+                error:err
+            })
+            else{
+                chat.messages.push(message._id)
+                chat.save()
+                .then(res.json({
+                    response:"New message in chat added",
+                    message
+                }))
+                .catch(err=>{
+                    res.status(400).json({
+                        message:"Error adding message to the chat",
+                        err
+                    })
+                })
+            }
+        })
+    })
 }
 
 //delete all chats
@@ -111,12 +96,15 @@ module.exports.chat_nuke = (req,res)=>{
 
 //get chat by id
 module.exports.get_chat_by_id = (req,res)=>{
-    PrivateChat.findById(req.params.id)
-    .then(chat=> res.json(chat))
-    .catch(err=> res.status(400).json({
-        err,
-        message:"Error finding the chat"
-    }))
+    PrivateChat.findById(req.params.id).populate('messages participants').exec((err,chat)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"error finding chat"
+        })
+        else{
+            res.json(chat)
+        }
+    })
 }
 
 //get all messages for a chat
@@ -172,5 +160,12 @@ module.exports.delete_chat_by_id = (req,res)=>{
 module.exports.delete_all_chats = (req,res)=>{
     PrivateChat.deleteMany({})
     .then(res.json("nuke deployed"))
+    .catch(err=> res.json(err))
+}
+
+//delete all messages
+module.exports.delete_all_messages = (req,res)=>{
+    message.deleteMany({})
+    .then(res.json("messages nuke deployed"))
     .catch(err=> res.json(err))
 }

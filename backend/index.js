@@ -47,67 +47,46 @@ server.listen(port, ()=>{
 })
 
 //socket.io work
-const message = require('./models/messageModel')
-let onlineUsers = []
+const message = require('./models/messageModel');
+let users = []
+const addUser = (userId, socketId) => {
+    !users.some((user) => user.userId === userId) &&
+      users.push({ userId, socketId });
+  };
+  
+  const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
+  };
+  
+  const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+  };
+
 mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true, useUnifiedTopology:true})
 .then(res=>{
-    //Socket io logic
-    io.on('connection', (socket)=>{
-        console.log("new user connection")
-        const {userid,username} = socket.handshake.query
-        let filterOnlineUsers = onlineUsers.filter(user=>{
-            return user.userid !== userid
-        })
-        if(socket.handshake.query.userid){
-            onlineUsers = [...filterOnlineUsers, {userid,username, socketid:socket.id}]
-        }
-    //new request for online users
-    socket.on('RequestOnlineUsers', ()=>{
-        socket.emit('onlineUsers', onlineUsers);
-        socket.broadcast.emit('onlineUsersUpdate',onlineUsers)
-    })
-    //listen for online users update
-    socket.on('updateAndSendOnlineUsers', ()=>{
-        socket.broadcast.emit('onlineUsers', onlineUsers)
-    })
-    //new message 
-    socket.on('message', async message_res=>{
-        const newMessage = new message({
-            sender:message_res.sender,
-            reciever:message_res.reciever,
-            roomid:message_res.roomid,
-            content:message_res.content
-        })
-        newMessage.save()
-        .then(result=>{
-            const onlineFriend = onlineUsers.filter(user=>{
-                user.userid === message_res.reciever
-            })
-            if(onlineFriend.length > 0){
-                const friendSocketId = onlineFriend[0].socketid
-                io.to(`${friendSocketId}`).emit('privateMessage', result)
-            }
-        }).catch(err=>console.log("new message error : ",err))
-    })
+   io.on('connection', (socket)=>{
+       console.log('User Connected');
 
-    //Disconnected User 
-    socket.on('disconnect', socketToClose =>{
-        try{
-            const {userId} = socket.handshake.query;
-            let filteredOnlineUsers = onlineUsers.filter(user=>{
-                return user.userid !== userId
-            });
-            onlineUsers = filteredOnlineUsers
-            socket.broadcast.emit('onlineUsersUpdate', filteredOnlineUsers)
-        }catch(err){
-            console.log(err)
-        }
-    })
+       //add user to online users list
+       socket.on('addUser', (userId)=>{
+           addUser(userId, socket.id);
+           io.emit('getUsers', users)
+       })
 
-    socket.on('canvas-data', (data)=> {
-        socket.broadcast.emit('canvas-data', data);
-        
-    })
+       //send and get message from user
+       socket.on('sendMessage', ({senderId, recieverId, text})=>{
+           const user = getUser(recieverId);
+           io.to(user.socketId).emit("getMessage", {
+               senderId,
+               text
+           })
+       })
 
-    })
+       //on user disconnect 
+       socket.on('disconnect', ()=>{
+           console.log("A user disconnected");
+           removeUser(socket.id);
+           io.emit('getUsers', users)
+       })
+   })
 })

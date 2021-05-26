@@ -26,8 +26,7 @@ function PostPage(props) {
         setComments(res.data.comments)
         setlikes(res.data.likes)
       }).catch(err => console.log("error fetching the post ", err))
-  }, [])
-  console.log(post)
+  })
   return (
     <div>
       <NavigationBar />
@@ -100,7 +99,7 @@ function PostPage(props) {
               <PostComment postid={post._id} />
             </div>
             <div >
-              <DisplayComments comments={post._id} />
+              <DisplayComments comments={post._id} author = {post.author}/>
             </div>
 
           </div>

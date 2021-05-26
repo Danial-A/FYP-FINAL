@@ -4,6 +4,7 @@ const Post = require('../models/postModel')
 const Users = require('../models/usermodel')
 const {postValidationSchema} = require('../validation/validationSchema')
 const {groupValidationSchema}  = require('../validation/validationSchema')
+
 //Create new group
 module.exports.create_group =async (req,res)=>{
     const userid = req.params.user
@@ -19,7 +20,7 @@ module.exports.create_group =async (req,res)=>{
     })
     newGroup.save()
     .then((group)=> {
-        group.admins.push({userid})
+        group.admins.push(mongoose.Types.ObjectId(userid))
         group.save()
         .then(response=>{
             Users.findById(userid, "groups", (err,user)=>{
@@ -64,7 +65,7 @@ module.exports.create_group_post = async (req,res)=>{
     const newPost =await new Post({
                 title: req.body.title,
                 body:req.body.body,
-                author: req.body.author,
+                author: mongoose.Types.ObjectId(req.body.author),
                 postType:req.body.postType
             })
             newPost.save()
@@ -75,7 +76,7 @@ module.exports.create_group_post = async (req,res)=>{
                         message:"Error finding the group"
                     })
                     else {
-                        group.posts.push({postid:response._id})
+                        group.posts.push(response._id)
                         group.save()
                         .then(()=>{
                             res.json("New post added to group")
@@ -138,15 +139,34 @@ module.exports.get_all_users_from_admin_id = (req,res)=>{
 
 //Add admins
 module.exports.add_admins = (req,res)=>{
-    const newAdmin = {
-        userid: req.body.userid
-    };
-    Group.findById(req.params.id)
-    .then(group=>{
-        group.admins.push(mongoose.Types.ObjectId(req.body.userid))
-        group.save()
-        res.json("admin added")
-    }).catch(err=> res.status(400).json({error:err,message:"Error adding the admin"}))
+    const userid = req.body.userid
+    Group.findById(req.params.id, (err,group)=>{
+        if(err) res.status(400).json({
+            error:err,
+            message:"Error retrieving the group"
+        })
+        else{
+            const admin_found = group.admins.filter(a => a.toString() === userid)
+            if(admin_found.length === 0){
+                res.json({
+                    message:"This user is not an admin",
+                    userid
+                })
+            }
+            else{
+                group.admins.push(mongoose.Types.ObjectId(userid))
+                group.save()
+                .then(res.json("new user added as the admin"))
+                .catch(err=> {
+                   res.status(400).json({
+                    message:"Error adding user to the admins list",
+                    err
+                   })
+                })
+            }
+        }
+    })
+    
 }
 
 // Remove admin
@@ -154,11 +174,11 @@ module.exports.remove_admin = (req,res)=>{
     const userid = req.body.userid
     Group.findById(req.params.id)
     .then(group=>{
-        const admin = group.admins.filter(m=> m.userid === userid)
+        const admin = group.admins.filter(m=> m.toString() === userid)
         if(admin.length === 0){
             res.json("No user found in group admins list")
         }else{
-            group.admins.id(admin[0]._id).remove()
+            group.admins.remove(mongoose.Types.ObjectId(userid))
             group.save()
             res.json("admin removed successfully")
         }
@@ -174,7 +194,7 @@ module.exports.add_members = (req,res)=>{
             message:"Error retrieving the group"
         })
         else{
-            const user_found = group.groupMembers.filter(u=> u.userid === userid)
+            const user_found = group.groupMembers.filter(u=> u.toString() === userid)
             if(user_found.length > 0) res.json({
                 message:"User is already a member",
                 userid
@@ -182,7 +202,7 @@ module.exports.add_members = (req,res)=>{
             else {
                 group.groupMembers.push(mongoose.Types.ObjectId(userid))
                 group.save()
-                .then(res.json("New member adder to the group"))
+                .then(res.json("New member added to the group"))
                 .catch(err=> res.status(400).json({
                     error:err,
                     message:"Error adding new member"
@@ -197,28 +217,28 @@ module.exports.remove_member = (req,res)=>{
     const userid = req.body.userid
     Group.findById(req.params.id)
     .then(group=>{
-        const member = group.groupMembers.filter(m=> m.userid === userid)
+        const member = group.groupMembers.filter(m=> m.toString() === userid)
         if(member.length === 0){
             res.json("No user found in group members list")
         }else{
-            group.groupMembers.id(member[0]._id).remove()
+            group.groupMembers.remove(mongoose.Types.ObjectId(userid))
             group.save()
-            res.json("Member removed successfully")
+            res.json({
+                message:"Member removed successfully",
+                members:group.groupMembers
+            })
         }
     }).catch(err => res.status(400).json({error:err, message:"Error finding the gorup"}))
 }
 
 //Find group by id
 module.exports.find_by_id = (req,res)=>{
-    Group.findById(req.params.id, (err,group)=>{
+    Group.findById(req.params.id).populate('admins groupMembers', 'firstname lastname emailid username dob').populate('posts').exec((err,group)=>{
         if(err) res.status(400).json({
             error:err,
             message:"Unable to locate the group"
         })
-        else res.json({
-            group,
-            message:"Group found"
-        })
+        else res.json(group)
     })
 }
 
@@ -230,15 +250,4 @@ module.exports.nuke = (req,res)=>{
         err,
         message:"Error deploying nuke"
     }))
-}
-
-//Trying the multiple populate query
-module.exports.get_all_members_and_admins = (req,res)=>{
-    Group.findById(req.params.id).populate('users Posts').exec((err,group)=>{
-        if(err) res.json(err)
-
-        else{
-            res.json(group)
-        }
-    })
 }

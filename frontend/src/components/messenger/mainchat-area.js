@@ -12,20 +12,22 @@ function MainChatArea({chatid}) {
     // })
    
     const [message,setMessage] = useState([])
-    const [content,setContent] = useState('')
+    const [text,setText] = useState('')
     
     useEffect(()=>{
-        axios.get(`http://localhost:8080/chats/${chatid}/message/`)
-        .then(response=> setMessage(response.data))
+        axios.get(`http://localhost:8080/chats/${chatid}`)
+        .then(response=> {
+            setMessage(response.data.messages)
+        })
         .catch(err=> console.log(err))
     },[])
 
     const sendMessage = () =>{
         const sender = localStorage.getItem('userid')
-        const roomid = chatid
-        axios.post(`http://localhost:8080/chats/${chatid}/message/new`, {sender,roomid,content})
+        axios.post(`http://localhost:8080/chats/${chatid}/message/new`, {sender,text})
         .then(response=>{
             console.log(response)
+            setText('')
         }).catch(err=>{
             console.log(err)
         })
@@ -52,9 +54,9 @@ function MainChatArea({chatid}) {
              placeholder="Type your message ....." 
              aria-label="Recipient's username" 
              aria-describedby="basic-addon2"
-             value = {content}
+             value = {text}
 
-             onChange = {e=> setContent(e.target.value)}
+             onChange = {e=> setText(e.target.value)}
              />
             <div class="input-group-append">
               <button className = "btn btn-danger" type = "submit" onClick = { (e)=> {
