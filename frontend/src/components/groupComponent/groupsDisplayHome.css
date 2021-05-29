@@ -98,3 +98,9 @@ span.Create-Group:hover{
     text-align: center;
 }
 
+.group-chat{
+    background-color: white;
+    height: 50vh;
+    border-radius: 10px;
+    overflow-y: scroll;
+}

@@ -20,8 +20,6 @@ function UserProfile() {
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(3);
 
-
-
     useEffect(()=>{
   
         const fetchPosts = async ()=>{

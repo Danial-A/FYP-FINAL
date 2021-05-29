@@ -17,18 +17,18 @@ function GroupsDisplay() {
     React.useEffect(async() => {
         try{
             const response =await axios.get(`http://localhost:8080/users/${userid}/groups`)
-            setGroups(response.data)
+            setGroups(response.data.groups)
         }catch(Err){
             console.log(Err)
         }
         
-    }, [])
+    },[userid])
     console.log(groups)
     return (
         <div style = {{color:"white"}} className  = "groups-main-container container">
             <div className="main-heading">
                 <h4>Your Groups</h4>
-                {groups.length > 0 ? (
+                {groups?.length > 0 ? (
                     groups.map((g,i)=>(
                         <div className = "text-crimson"><Link to = {`/group/${g._id}`}>
                             <div className="group-container">

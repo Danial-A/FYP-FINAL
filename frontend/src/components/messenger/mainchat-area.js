@@ -47,6 +47,7 @@ function MainChatArea({chatid}) {
                     ))
                 ) : <div>No messages yet</div> }
             </div>
+            </div>
             <div className=" container-fluid send-message">
             <div class="input-group mb-3">
             <input type="text"
@@ -67,7 +68,7 @@ function MainChatArea({chatid}) {
           </div>
         </div>
             
-        </div>
+        
         </div>
     )
 }

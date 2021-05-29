@@ -14,7 +14,13 @@ h3{
 }
 
 .chat-list{
+    height:45vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
     background-color: white;
+    border-radius: 20px;
+    margin-bottom:2vh;
 }
 .chat-list ul{
     padding: 10px;
@@ -92,8 +98,35 @@ padding-bottom: 5px;
     float: right;
 }
 
-.message-area{
-    height: 500px;
-    position: relative;
-    overflow-y: scroll
+.chat-messages{
+    height: 65vh;
+    display: flex;
+    flex-direction: column;
+
 }
+
+.message-area{
+    height: 100%;
+    overflow-y: scroll;
+}
+
+/* Scroll bar options*/
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }

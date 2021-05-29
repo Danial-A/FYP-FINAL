@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Group = require('../models/groupModel')
 const Post = require('../models/postModel')
 const Users = require('../models/usermodel')
+const Rooms = require('../models/roomModel')
 const {postValidationSchema} = require('../validation/validationSchema')
 const {groupValidationSchema}  = require('../validation/validationSchema')
 
@@ -12,17 +13,24 @@ module.exports.create_group =async (req,res)=>{
     if(error){
         res.status(400).send(error.details[0].message)
     }
-    
-    const title = req.body.title
-    const description = req.body.description
-    const newGroup = new Group({
-        title,description
+    const groupChat = new Rooms({
+        name:req.body.title,
+    })
+    groupChat.save()
+    .then(chat=>{
+        chat.participants.push(mongoose.Types.ObjectId(userid))
+        chat.save()
+        const title = req.body.title
+        const description = req.body.description
+        const newGroup = new Group({
+        title,description, groupChatId:chat._id
     })
     newGroup.save()
     .then((group)=> {
-        group.admins.push(mongoose.Types.ObjectId(userid))
-        group.save()
-        .then(response=>{
+            group.groupChatId = chat._id
+            group.admins.push(mongoose.Types.ObjectId(userid))
+            group.save()
+            .then(response=>{
             Users.findById(userid, "groups", (err,user)=>{
                 if(err) return res.status(400).json({
                     err,
@@ -43,8 +51,20 @@ module.exports.create_group =async (req,res)=>{
             err,
             message:"error creating the group"
         }))
+        }).catch(err=>{
+            res.status(400).json({
+                message:"Error creating/saving the chat room for this group",
+                err
+            })
+        })
+    }).catch(err=>{
+        res.status(400).json({
+            message:"Error creating the group chat",
+            err
+        })
     })
-    .catch(err=> res.status(400).json({error: err, message:"Error creating the group"}))
+
+    
 }
 
 //Get All groups
@@ -96,43 +116,33 @@ module.exports.create_group_post = async (req,res)=>{
 
 //Get all posts in group
 module.exports.get_group_posts = (req,res)=>{
-    Group.findById(req.params.id, async (err,result)=>{
+    Group.findById(req.params.id).populate({
+        path:"posts",
+        populate:{
+            path:"author",
+            select:"firstname lastname username dob"
+        }
+    }).exec((err,group)=>{
         if(err) res.status(400).json({
-            message:"Error retrieving the group",
-            error:err
+         message:"Error finding the group",
+         err
         })
         else{
-            const PostIDs = await result.posts.map(post => post.postid)
-            Post.find({
-                '_id':{
-                    $in:PostIDs
-                }
-            }).then(response=>{
-                res.json(response)
-            }).catch(err=>{
-                res.status(400).json({
-                    error:err,
-                    message:"Error finding the posts for this group"
-                })
-            })
-          
+            res.json(group.posts)
         }
     })
     
-    .catch(err=> res.status(400).json({error:err, message: "error finding the group"}))
 }
 
 //get all users from admin ids
 module.exports.get_all_users_from_admin_id = (req,res)=>{
-    Group.findById(req.params.id, "admins",(err,admins)=>{
+    Group.findById(req.params.id, "admins").populate('admins').exec((err,admins)=>{
         if(err) res.status(400).json({
-            message:"Error retrieving the admins",
-            error:err
+            err,
+            message:"error finding group"
         })
-
-        else if (admins === null) res.json("Group does not exist")
         else{
-            
+            res.json(admins)
         }
     })
 }
@@ -202,7 +212,23 @@ module.exports.add_members = (req,res)=>{
             else {
                 group.groupMembers.push(mongoose.Types.ObjectId(userid))
                 group.save()
-                .then(res.json("New member added to the group"))
+                .then(group=>{
+                    Users.findById(userid, "firstname lastname username groups", (err,user)=>{
+                        if(err) res.status(400).json({
+                            error:err,
+                            message:"error finding user groups"
+                        })
+                        else{
+                            user.groups.push(group._id)
+                            user.save()
+                            .then(res.json("New member added to group and group added to user's list"))
+                            .catch(err=> res.status(400).json({
+                                message:"Error addding the group to list",
+                                err
+                            }))
+                        }
+                    })
+                })
                 .catch(err=> res.status(400).json({
                     error:err,
                     message:"Error adding new member"
@@ -232,13 +258,26 @@ module.exports.remove_member = (req,res)=>{
 }
 
 //Find group by id
-module.exports.find_by_id = (req,res)=>{
-    Group.findById(req.params.id).populate('admins groupMembers', 'firstname lastname emailid username dob').populate('posts').exec((err,group)=>{
+module.exports.get_all_members_and_admins = (req,res)=>{
+    Group.findById(req.params.id).populate('admins groupMembers', 'firstname lastname emailid username dob').exec((err,group)=>{
         if(err) res.status(400).json({
             error:err,
             message:"Unable to locate the group"
         })
         else res.json(group)
+    })
+}
+
+//find group by id
+module.exports.find_by_id = (req,res)=>{
+    Group.findById(req.params.id).populate("admins groupMembers", "fristname lastname username dob").populate('posts').exec((err,group)=>{
+        if(err) res.status(400).json({
+            error:err,
+            message:"Unable to locate the group"
+        })
+        else{
+            res.json(group)
+        }
     })
 }
 
@@ -250,4 +289,18 @@ module.exports.nuke = (req,res)=>{
         err,
         message:"Error deploying nuke"
     }))
+}
+
+//search group by title 
+module.exports.search_by_title = (req,res)=>{
+    Group.aggregate([
+        {
+            $search:{
+                "autocomplete":{
+                    "query":`${req.body.query}`,
+                    "path":"title"
+                }
+            }
+        }
+    ]).then(group=> res.json(group)).catch(err=>res.json(err))
 }

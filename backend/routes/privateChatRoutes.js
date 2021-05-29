@@ -21,6 +21,8 @@ router.post("/:id/message/new", privateChatController.new_chat_message)
 router.get('/:id/message/', privateChatController.get_all_messages_in_chat)
 //delete chat by id
 router.delete('/:id/delete', privateChatController.delete_chat_by_id)
+//get a chat for two users
+router.get('/:first/chat/:second', privateChatController.get_chat_for_users)
 
 //delete all
 router.delete('/nuke', privateChatController.delete_all_chats)

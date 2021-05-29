@@ -6,6 +6,7 @@ import {useFormik} from 'formik'
 import * as Yup from 'yup'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Post from '../post-component/post'
+import './groupsDisplayHome.css'
 function GroupPage({match}) {
     const gid = match.params.id
     const [group, setGroup] = useState({})
@@ -13,28 +14,19 @@ function GroupPage({match}) {
     const [groupAdmins,setGroupAdmins] = useState([])
     const [posts,setPosts] = useState([])
     useEffect(()=>{
-        axios.get(`http://localhost:8080/groups/${gid}/posts/`)
-        .then(response=>{
-            //console.log(response)
-            setPosts(response.data)
-
-        }).catch(err=>{
-            console.log(err)
-        })
-    },[])
-
-    useEffect(()=>{
         axios.get(`http://localhost:8080/groups/${gid}/`)
         .then(response=>{
-            setGroup(response.data.group)
-            setGroupMembers(response.data.group.members)
-            setGroupAdmins(response.data.group.admins)
-            console.log(groupAdmins)
+            //console.log(response)
+            setGroup(response.data)
+            setPosts(response.data.posts)
+            setGroupAdmins(response.data.admins)
+            setGroupMembers(response.data.groupMembers)
+
         }).catch(err=>{
             console.log(err)
         })
     },[])
-    
+    console.log(groupMembers)
     //form validation
 
     const {TotalPosts, setTotalPosts} = useState([]);
@@ -48,7 +40,7 @@ function GroupPage({match}) {
         axios.post(`http://localhost:8080/groups/${gid}/posts/create`, values)
         .then(res =>{
             window.alert("Post Added!");
-            setTotalPosts([...setTotalPosts])
+            setTotalPosts([...setTotalPosts, res.data])
             onSubmitProps.resetForm()
             
         })
@@ -71,11 +63,11 @@ function GroupPage({match}) {
         <div className = "container-fluid bottom-margin">
         <NavigationBar/>
             <div className="row mt-4">
-                <div className="col-md-4">
+                <div className="col-md-3">
                     <div className="container group-info">
                         <h3>Group information</h3>
-                        <h5>Title: {group.title}</h5>
-                        <h5>Description: <small>{group.description}</small></h5>
+                        <h5>Title: {group?.title}</h5>
+                        <h5>Description: <small>{group?.description}</small></h5>
                     </div>
                     <div className="container create-post mt-5">
                          <h3>Create post</h3>
@@ -118,21 +110,35 @@ function GroupPage({match}) {
                         <Post posts = {posts}/>
                     </div>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-3">
                     <div className="container members-section ">
                         <h5>Group Members</h5>
                         <ul>
-
+                            {
+                                groupMembers.map(
+                                    u=>(
+                                        groupMembers.length > 0 ? <li>{u.username}</li> : <li>No users</li>
+                                    )
+                                )
+                            }
                         </ul>
-                        <button className = "btn btn-danger member-btn">Add members</button>
+                        
                     </div>
-                    <div className="container admins mt-5">
+                    <div className="container admins mt-3">
                         <h5>Group Admins</h5>
                         <ul>
-                            
+                            {
+                                groupAdmins.map(a=>(
+                                    <li>{a.username}</li>
+                                ))
+                            }
                         </ul>
                     </div>
+                    <div className="container group-chat mt-3">
+                        <h5 style ={{textAlign:"center"}} className = "mt-3">Group Chat</h5>
+                    </div>
                 </div>
+                
             </div>
             <Footer/>
         </div>

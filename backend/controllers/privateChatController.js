@@ -169,3 +169,20 @@ module.exports.delete_all_messages = (req,res)=>{
     .then(res.json("messages nuke deployed"))
     .catch(err=> res.json(err))
 }
+
+//get single chat for user two users
+module.exports.get_chat_for_users =async (req,res)=>{
+    try{
+        const conversation = await PrivateChat.findOne({
+            participants:{
+                $in : [req.params.first, req.params.second]
+            }
+        })
+        res.json(conversation)
+    }catch(err){
+        res.status(400).json({
+            message:"Error getting chat",
+            err
+        })
+    }
+}

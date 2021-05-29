@@ -16,7 +16,8 @@ const roomSchema = new schema({
         }
     ],
     messages:[{
-        type:mongoose.Types.ObjectId
+        type:mongoose.Types.ObjectId,
+        ref:"messages"
     }]
 },{
     timestamps:true

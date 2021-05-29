@@ -10,7 +10,7 @@ const app = express();
 const server = http.createServer(app)
 const io = socketio(server,{
     cors:{
-        origin:"*"
+        origin:"http://localhost:3000"
     }
 })
 const port = process.env.PORT || 8080;
@@ -47,7 +47,6 @@ server.listen(port, ()=>{
 })
 
 //socket.io work
-const message = require('./models/messageModel');
 let users = []
 const addUser = (userId, socketId) => {
     !users.some((user) => user.userId === userId) &&
@@ -76,7 +75,8 @@ mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true,
        //send and get message from user
        socket.on('sendMessage', ({senderId, recieverId, text})=>{
            const user = getUser(recieverId);
-           io.to(user.socketId).emit("getMessage", {
+           const socketid = user ? user.socketId : null;
+           io.to(socketid).emit("getMessage", {
                senderId,
                text
            })

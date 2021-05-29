@@ -15,8 +15,8 @@ import 'react-toastify/dist/ReactToastify.css';
 function SignUp(props) {
     //Toast setting
     toast.configure()
-    const signedUp = () => {
-        toast.success('User sign up successful!', {
+    const signedUp = (message) => {
+        toast.success(message, {
         });
     }
 
@@ -36,8 +36,7 @@ function SignUp(props) {
         // setRedirect(true);
         axios.post('http://localhost:8080/users/register', values)
             .then((res) => {
-                signedUp()
-                console.log(values)
+                signedUp(res.data)
             })
             .catch(err => { console.log('Error: ' + err) });
         onSubmitProps.resetForm()

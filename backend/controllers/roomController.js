@@ -1,5 +1,6 @@
 const Rooms = require('../models/roomModel')
 const message = require('../models/messageModel')
+const mongoose = require('mongoose')
 
 //get all rooms
 module.exports.get_all_rooms = (req,res)=>{
@@ -37,6 +38,7 @@ module.exports.delete_room_by_id = (req,res)=>{
 //create new room
 module.exports.create_room = (req,res)=>{
     const roomname = req.body.name;
+    const user = mongoose.Types.ObjectId(req.params.user)
     Rooms.findOne({"name":roomname}, (err,room)=>{
         if(err) res.status(401).json({
             err,
@@ -47,7 +49,8 @@ module.exports.create_room = (req,res)=>{
         }
         else{
             const newRoom = new Rooms({
-                name:roomname
+                name:roomname,
+                participants: [user]
             })
             newRoom.save()
             .then(room => res.json({
@@ -64,7 +67,13 @@ module.exports.create_room = (req,res)=>{
 
 //get room by id
 module.exports.get_room_by_id = (req,res)=>{
-    Rooms.findById(req.params.id)
+    Rooms.findById(req.params.id).populate('participants', "firstname lastname username dob").populate({
+        path:"messages",
+        populate:{
+            path:'sender',
+            select:"firstname lastname dob username"
+        }
+    })
     .then(room=> res.json(room))
     .catch(err=> res.status(400).json({
         err,
@@ -75,16 +84,16 @@ module.exports.get_room_by_id = (req,res)=>{
 
 //New message in a chat
 module.exports.new_message_to_room = (req,res)=>{
-    const {sender,reciever,content} = req.body
-    const roomid = req.params.id
-    Rooms.findById(roomid)
+    const {sender,text} = req.body
+    const chatid = req.params.id
+    Rooms.findById(chatid)
     .then(room=> {
         const newMessage = new message({
-            sender,reciever,content,roomid
+            sender,text,chatid
         })
         newMessage.save()
         .then(message=>{
-            room.messages.push({messageid : message._id})
+            room.messages.push(message._id)
             room.save()
             .then(r=>res.json({
                 messages: r.messages,

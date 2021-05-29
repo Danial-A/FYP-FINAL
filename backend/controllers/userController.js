@@ -308,23 +308,16 @@ module.exports.join_group = (req,res)=>{
 
 //Get all user groups
 module.exports.get_user_groups = (req,res)=>{
-    User.findById(req.params.id)
-    .then(user=>{
-        const groupids = user.groups.map(g=> g.groupid)
-        Groups.find({
-            '_id':{
-                $in:groupids
-            }
-        }).then(group=> res.json(group))
-        .catch(err=> res.status(400).json({
-            message:"Error retrieving the groups",
+    User.findById(req.params.id, "groups").populate('groups').exec((err,groups)=>{
+        if(err) res.status(400).json({
+            message:"Error finding user groups",
             err
-        }))
+        })
+        else{
+            res.json(groups)
+        }
     })
-    .catch(err=> res.status(400).json({
-        message:"Error retrieving the user",
-        err
-    }))
+    
 }
 
 //user search by username

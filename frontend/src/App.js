@@ -12,6 +12,7 @@ import Messenger from './pages/messenger'
 import EditorPage from './pages/editorPage';
 import WhiteBoard from './pages/WhiteBoard'
 import Youtube from './components/youtube/Youtube'
+import NewMessenger from './components/NewMessenger/Messenger';
 
 
 function App() {
@@ -24,12 +25,12 @@ function App() {
       <Route exact path = "/home" component = {UserHomePage}/>
       <Route exact path = "/group/:id" component = {GroupPage}/>
       <Route exact path = "/user/post/:id" component = {PostPage}/>
-      <Route exact path = "/messenger" component = {Messenger}/>
-      <Route exact path = "/messenger/:id" component = {Messenger}/>
+      <Route exact path = "/messenger" component = {NewMessenger}/>
       <Route exact path = "/playground" component = {EditorPage}/>
       <Route exact path = "/playground/:id" component = {EditorPage}/>
       <Route exact path = "/whiteboard" component = {WhiteBoard}/>
       <Route exact path = "/youtube" component = {Youtube}/>
+     {/* <Route exact path = "/new/messenger" component = {NewMessenger}/> */}
 
     </Switch>
   );

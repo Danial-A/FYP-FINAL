@@ -11,7 +11,7 @@ const groupModel = new schema({
     description:{
         type:String,
         required:true,
-        min:20
+        min:6
     },
     admins:[
         {
@@ -31,7 +31,11 @@ const groupModel = new schema({
             type: mongoose.Schema.Types.ObjectId,
             ref:'users'
         }
-    ]
+    ],
+    groupChatId :{
+        type: mongoose.Types.ObjectId,
+        ref: "rooms"
+    }
 },{
     timestamps :true,
     autoIndex:false
