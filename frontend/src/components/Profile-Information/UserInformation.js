@@ -9,13 +9,14 @@ import moment from 'moment'
 import './UserInformation.css'
 import { faEdit} from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import UserInterests from '../interests/UserInterests'
 
 
 
 function UserInformation() {
     const user = localStorage.getItem('userid')
     const [User, setUser] = useState({})
+    const [interests, setInterests] = useState([])
 
     //Show hide modal
     const [show, setShow] = useState(false);
@@ -26,14 +27,13 @@ function UserInformation() {
         async function getUserInfo() {
             const UserInformation = await axios.get(`http://localhost:8080/users/${user}`)
             setUser(UserInformation.data)
+            setInterests(UserInformation.data.interests)
         }
         getUserInfo()
 
     }, [])
 
-
     //Edit user information
-
     const initialValues = {
         firstname: User.firstname,
         lastname: User.lastname,
@@ -47,7 +47,6 @@ function UserInformation() {
         // .then(response=> console.log(response))
         // .catch(err=> console.log(err))
         // console.log(values)
-        //console.log(values)
     }
     const validationSchema = Yup.object({
         firstname: Yup.string().required("First name is required..."),
@@ -91,6 +90,13 @@ function UserInformation() {
              
                     </ListGroup>
                 </Card>
+            </div>
+            <div style = {{backgroundColor:"white", borderRadius:"10px"}} className = "mt-4">
+
+            <h5 style ={{textAlign:"center"}}>User Interests</h5>
+            <div className="interests">
+                {interests.length > 0 ? <UserInterests interests = {interests}/> : <div> You do not have any preferred languages</div>}
+            </div>
             </div>
 
 

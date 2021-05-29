@@ -4,6 +4,7 @@ import Footer from '../components/footer-section/footer'
 import axios from 'axios'
 import Post from '../components/post-component/post'
 import SearchPanel from '../components/userSearch/searchPanel'
+import RecommendedUsers from '../components/recommendations/recommendedUsers'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './UserProfile.css'
 
@@ -32,8 +33,11 @@ function UserHomePage() {
                 <div className="col-md-3">
                     <SearchPanel/>
                 </div>
-                <div className="col-md-8 mb-5">
+                <div className="col-md-6 mb-5">
                 <Post posts = {posts} loading= {loading} />
+                </div>
+                <div className="col-md-3">
+                    <RecommendedUsers/>
                 </div>
             </div>
             </div>

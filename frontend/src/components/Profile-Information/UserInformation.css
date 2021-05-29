@@ -73,3 +73,10 @@ ol.follower-section{
     padding: 10px;
     text-align: center;
 }
+
+.interests{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}

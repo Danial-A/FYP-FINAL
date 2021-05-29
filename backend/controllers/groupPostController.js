@@ -15,6 +15,7 @@ module.exports.create_group =async (req,res)=>{
     }
     const groupChat = new Rooms({
         name:req.body.title,
+        participants :[mongoose.Types.ObjectId(userid)]
     })
     groupChat.save()
     .then(chat=>{
@@ -22,8 +23,9 @@ module.exports.create_group =async (req,res)=>{
         chat.save()
         const title = req.body.title
         const description = req.body.description
+        const groupChatId = chat._id
         const newGroup = new Group({
-        title,description, groupChatId:chat._id
+        title,description, groupChatId
     })
     newGroup.save()
     .then((group)=> {

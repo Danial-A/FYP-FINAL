@@ -61,7 +61,15 @@ const userSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref:'Groups'
         }
-    ]
+    ],
+    interests :[
+        {
+            type:String,
+            trim:true,
+            unique:true
+        }
+    ],
+    profileImage: String
 
 },{
     timestamps:true,

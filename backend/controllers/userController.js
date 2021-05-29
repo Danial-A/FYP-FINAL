@@ -425,3 +425,37 @@ module.exports.delete_user_chat = (req,res)=>{
         message:"Error finding user"
     }))
 }
+
+//get all user interests
+module.exports.get_all_interests = (req,res)=>{
+    User.findById(req.params.id, "interests", (err,user)=>{
+        if(err) res.status(400).json({
+            message:"Error finding the user",
+            err
+        })
+        else{
+            res.json(user)
+        }
+    })
+}
+
+//add interest 
+module.exports.add_interest = (req,res) =>{
+    User.findById(req.params.id, "interests", (err,user)=>{
+        if(err) res.status(400).json({
+            message:"Error finding the user",
+            err
+        })
+        else{
+            user.interests.push(req.body.interest)
+            user.save()
+            .then(res.json("Interest added for user"))
+            .catch(err=>{
+                res.status(400).json({
+                    message:"Error adding interest",
+                    err
+                })
+            })
+        }
+    })
+}

@@ -19,10 +19,12 @@ router.get('/username', userController.search_by_username)
 router.get('/:id', userController.search_by_id)
 //Delete user account
 router.delete('/:id/delete', userController.delete_user_account)
+
 //Get All followers
 // router.get('/:id/followers', userController.get_followers)
 //Get All user following people
 // router.get('/:id/following',userController.get_following)
+
 //Update user information
 router.post('/:id/update', userController.update_user_information)
 
@@ -47,5 +49,11 @@ router.delete('/:id/chats/delete', userController.delete_user_chat)
 
 //get all followers and following users
 router.get('/:id/getall', userController.get_followers_and_following)
+
+//get all interests
+router.get('/:id/interests', userController.get_all_interests)
+
+//add interest
+router.post('/:id/interests/add', userController.add_interest)
 
 module.exports = router
