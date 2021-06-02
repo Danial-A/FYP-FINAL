@@ -8,42 +8,61 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Link, useHistory } from 'react-router-dom'
 import axios from 'axios'
-
+import {toast } from 'react-toastify'
 
 function SignIn() {
-    
-    
+    toast.configure()
+    const history = useHistory();
+    const signedIn = (message) =>{
+        
+            toast.success(message, {
+                position:"top-center",
+                autoClose:2000,
+                hideProgressBar:true,
+                pauseOnHover:true,
+                closeOnClick:true
+            })
+        
+    }
+
+    const wrongCredentials = (message)=>{
+        toast.error(message, {
+            position:"top-center",
+            autoClose:2000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+        })
+    }
+
+
     const [loggedIn, setLoggedIn] = useState(false)
     const initialValues = {
         username: '',
         password: ''
     }
 
-    const history = useHistory();
-    function redirectUser() {
-        if (loggedIn) {
-            history.push('/Home')
-        } else return null
-    }
-
-    const onSubmit = (values, onSubmitProps) => {
-        axios.post('http://localhost:8080/users/login', values)
-            .then(res => {
-                console.log(res.data.userid)
-                if (res.status === 200) {
-                    axios.get(`http://localhost:8080/users/${res.data.userid}`)
-                        .then(user => console.log(user))
-                        .catch(err => console.log(err))
-                    const storage = localStorage;
-                    storage.setItem('userid', res.data.userid)
-                    storage.setItem("token", res.data.token)
-                    storage.setItem("username", res.data.username)
-                    setLoggedIn(true)
-                }
-                redirectUser()
-            })
-            .catch(err => console.log(err))
-        onSubmitProps.resetForm()
+    const onSubmit = async (values, onSubmitProps) => {
+        try{
+            const response = await axios.post('http://localhost:8080/users/login', values)
+            if (response.status === 200) {
+              
+                const storage = localStorage;
+                signedIn(response.data.message)
+                setLoggedIn(true)
+                storage.setItem('userid', response.data.userid)
+                storage.setItem("token", response.data.token)
+                storage.setItem("username", response.data.username)
+                onSubmitProps.resetForm()
+                history.push('/home')
+            }
+           
+        }catch(err){
+            wrongCredentials("Invalid credentials")
+            onSubmitProps.resetForm()
+            console.log(err)
+        }
+       
     }
 
 
@@ -106,7 +125,7 @@ function SignIn() {
 
 
                                 <Row className="login-btn">
-                                    <Button variant="primary" type="submit" onClick={redirectUser}>Log In</Button>
+                                    <Button variant="primary" type="submit">Log In</Button>
                                 </Row>
                             </Form>
                         </div>

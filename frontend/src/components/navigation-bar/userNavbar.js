@@ -5,10 +5,23 @@ import './navbar.css'
 import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook} from '@fortawesome/free-solid-svg-icons'
 import {Link} from 'react-router-dom'
-
+import {toast } from 'react-toastify'
 
 function NavigationBar() {
+  toast.configure()
+
+  const logOut = () =>{
+    toast.error("User Logged Out!",{
+                position:"top-center",
+                autoClose:2000,
+                hideProgressBar:true,
+                pauseOnHover:true,
+                closeOnClick:true
+    })
+  }
+
   const handleLogout =  () =>{
+    logOut()
     localStorage.clear()
   }
     return (

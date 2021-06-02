@@ -1,0 +1,17 @@
+.card-container{
+    border: 1px solid crimson;
+    border-radius:10px ;
+    padding: 10px;
+}
+
+.card-container:hover{
+    background-color:crimson;
+    transition: 0.5s ease;
+    color: white;
+    cursor: pointer;
+
+}
+
+.group-chat{
+    overflow-y: scroll;
+}

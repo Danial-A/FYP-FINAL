@@ -10,18 +10,37 @@ import './UserInformation.css'
 import { faEdit} from '@fortawesome/free-solid-svg-icons'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import UserInterests from '../interests/UserInterests'
-
+import {toast } from 'react-toastify'
 
 
 function UserInformation() {
+
+    toast.configure()
+    const AddedLanguage = (message)=>{
+        toast.success(message, {
+            position:"top-center",
+            autoClose:3000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+        })
+    }
     const user = localStorage.getItem('userid')
     const [User, setUser] = useState({})
     const [interests, setInterests] = useState([])
-
+    const [interest, setInterest] = useState("")
+    const [file, setFile] = useState()
+  
     //Show hide modal
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+    //Profile image modal
+    const [profile, setProfileShow] = useState(false);
+    const profileClose = () => setProfileShow(false);
+    const profileShow = () => setProfileShow(true);
 
     useEffect(() => {
         async function getUserInfo() {
@@ -31,7 +50,7 @@ function UserInformation() {
         }
         getUserInfo()
 
-    }, [])
+    },[])
 
     //Edit user information
     const initialValues = {
@@ -41,7 +60,6 @@ function UserInformation() {
         emailid: User.emailid,
         dob: User.dob
     }
-    // console.log(initialValues)
     const onSubmit = (values) => {
         // axios.post(`http://localhost:8080/users/${user}/update`, values)
         // .then(response=> console.log(response))
@@ -62,6 +80,33 @@ function UserInformation() {
     })
     let tooltip = <Tooltip><strong>Edit Profile Information</strong></Tooltip>;
     // console.log(formik.values)
+
+    const handleAddInterest =async () =>{
+        try{
+            if(interest === "" || interest === null){
+                window.alert("Include a language first...")
+            }else{
+                const response = await axios.post(`http://localhost:8080/users/${user}/interests/add`, {interest})
+                setInterests([...interests, response.data.interest])
+                AddedLanguage(response.data.message)
+                setInterest('')
+            } 
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    const handleImageUpload =async ()=>{
+        try{
+            const data = new FormData()
+            data.append("file", file)
+            const imageUpload =await axios.post(`http://localhost:8080/users/${user}/image/upload`, data)
+            console.log(imageUpload.data)
+        }catch(err){
+            console.log(err)
+        }
+
+    }   
     return (
      
         <div className="user-information-section">
@@ -87,17 +132,67 @@ function UserInformation() {
                         <ListGroup.Item><FontAwesomeIcon icon={faUsers} className="icon" />Username:<pre> {User.username}</pre></ListGroup.Item>
                         <ListGroup.Item><FontAwesomeIcon icon={faEnvelope} className="icon" />Email:<pre> {User.emailid}</pre></ListGroup.Item>
                         <ListGroup.Item><FontAwesomeIcon icon={faCalendar} className="icon" />DOB:<pre> {moment(User.dob).format("MMMM DD YYYY")}</pre></ListGroup.Item>
-             
+
                     </ListGroup>
+                    <button className = "btn btn-danger" onClick = {profileShow}>Change Profile Picture?</button>
                 </Card>
             </div>
             <div style = {{backgroundColor:"white", borderRadius:"10px"}} className = "mt-4">
 
-            <h5 style ={{textAlign:"center"}}>User Interests</h5>
+            <h5 style ={{textAlign:"center"}}>Preferred Languages</h5>
             <div className="interests">
-                {interests.length > 0 ? <UserInterests interests = {interests}/> : <div> You do not have any preferred languages</div>}
+                {interests.length > 0 ? <UserInterests interests = {interests}
+                    setInterests = {setInterest}
+                /> : <div> You do not have any preferred languages</div>}
+            </div>
+            <div className="addBtn mt-4">
+            <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Enter a language name e.g. python" 
+                value = {interest}
+                onChange = {e=> setInterest(e.target.value)}
+            />
+            <div class="input-group-append">
+            <button className = "btn btn-danger" onClick = {(e)=>{
+                e.preventDefault()
+                handleAddInterest()
+            }}>Add</button>
+            </div>
+          </div>
             </div>
             </div>
+
+            {/*Change image modal*/}
+            <>
+                <Modal show={profile} onHide={profileClose}>
+                    <Modal.Header closeButton>
+                    <Modal.Title>Upload Profile Image</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                    <form encType = "multipart/form-data">
+                        <div class="input-group mb-3">
+                        <input type="file" class="form-control" name = "file" accept = ".jpg"
+                            onChange = {event=>{
+                                const file = event.target.files[0]
+                                console.log(event.target.files)
+                                setFile(file)
+                            }}
+                        />
+                        <div class="input-group-append">
+                        <button className = "btn btn-danger" onClick = {(e)=>{
+                            e.preventDefault()
+                            handleImageUpload()
+                        }}>Upload</button>
+                        </div>
+                        </div>
+                    </form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                    <Button variant="secondary" onClick={profileClose} style = {{backgroundColor:"#1c2237"}}>
+                        Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
 
 
 

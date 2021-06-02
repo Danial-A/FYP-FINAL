@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const userController = require('../controllers/userController')
+const upload = require('../validation/upload')
+
 
 //Get all users
 router.get('/',userController.get_all)
@@ -11,6 +13,7 @@ router.post('/login', userController.user_login)
 router.post("/follower/:id", userController.following_follower)
 //Remove follower
 router.post("/follower/:id/remove", userController.remove_follower)
+router.post("/following/:id/remove", userController.remove_following)
 //delete all users
 router.post('/nuke', userController.nuke)
 //Find by username
@@ -49,11 +52,16 @@ router.delete('/:id/chats/delete', userController.delete_user_chat)
 
 //get all followers and following users
 router.get('/:id/getall', userController.get_followers_and_following)
-
 //get all interests
 router.get('/:id/interests', userController.get_all_interests)
-
 //add interest
 router.post('/:id/interests/add', userController.add_interest)
+//remove interest
+router.post('/:id/interests/remove', userController.remove_interest)
+//upload profile image
+router.post('/:user/image/upload', upload.single('file'), userController.image_upload)
+
+//get user recommendations
+router.get('/:id/recommendations', userController.user_recommendations)
 
 module.exports = router

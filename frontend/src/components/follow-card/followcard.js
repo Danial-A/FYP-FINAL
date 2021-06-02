@@ -3,15 +3,37 @@ import './followcard.css'
 import {Modal} from 'react-bootstrap'
 import moment from 'moment'
 import axios from 'axios'
+import {toast} from 'react-toastify'
 import 'bootstrap/dist/css/bootstrap.min.css'
 function FollowCard({user}) {
+
+    toast.configure()
+    const removeUserToast  = (message)=>{
+        toast.success(message, {
+            position:"top-center",
+            autoClose:3000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+        })
+    }
+
     const [show, setShow] = useState(false);
     const currentUser = localStorage.getItem('userid')
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const removeFollower = (uid) =>{
         axios.post(`http://localhost:8080/users/follower/${currentUser}/remove`, {userid: uid})
-        .then(res => console.log(res.data))
+        .then(res => {
+            if(res.data === "This user is not your follower"){
+                axios.post(`http://localhost:8080/users/following/${currentUser}/remove`, {userid : uid})
+                .then(response => removeUserToast(response.data))
+                .catch(err=> console.log(err))
+            }
+            else{
+                removeUserToast(res.data)
+            }
+        })
         .catch(err=> console.log(err))
     }
     return (

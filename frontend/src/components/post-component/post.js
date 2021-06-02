@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import Axios from 'axios'
 import Tippy from '@tippy.js/react'
-import { faThumbsUp, faComment, faShare, faSave, faTrash, faEdit, faArchive } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faComment, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { Modal, Button, DropdownButton, Dropdown } from 'react-bootstrap'
@@ -13,7 +13,7 @@ import 'tippy.js/dist/tippy.css'
 
 
 function Post({ posts, loading }) {
-  const username = localStorage.getItem('username')
+  const userid = localStorage.getItem('userid')
   const [liked, setLiked] = useState(false)
 
   //Handle close/open Modal
@@ -26,7 +26,7 @@ function Post({ posts, loading }) {
 
 
   const checkLike = (postid) => {
-    axios.post(`http://localhost:8080/posts/${postid}/like`, { username })
+    axios.post(`http://localhost:8080/posts/${postid}/like`, { userid })
       .then(response => {
 
         if (response.status === 200) {
@@ -95,7 +95,6 @@ function Post({ posts, loading }) {
   if (loading) {
     return <h2>Loading...</h2>
   }
-
   return (
     <div className="container-fluid posts-section">
     
@@ -118,8 +117,6 @@ function Post({ posts, loading }) {
                 <div className="col-md-3">
 
                 <pre><strong>Created:</strong>{moment(post.createdAt).fromNow()}</pre>
-
-                {console.log(post.author)}
                 </div>
                 <div className="col-md-1">
                   {post.author._id?.toString() === localStorage.getItem('userid') ?
@@ -148,6 +145,9 @@ function Post({ posts, loading }) {
                 <div className="col">
                   <div className="post-body">
                     <p>{post.body}</p>
+                    {/*<div className="post-image">
+                    <img src="/images/background.jpg" alt="" />
+                </div>*/}
                   </div>
                 </div>
               </div>

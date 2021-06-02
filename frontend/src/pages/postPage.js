@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PostComment from '../components/comments/comment'
 import DisplayComments from '../components/comments/comments-display'
 import { Button,DropdownButton,Dropdown } from 'react-bootstrap'
+import {toast } from 'react-toastify'
 import axios from 'axios'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -15,18 +16,55 @@ import '../components/post-component/post.css'
 import 'tippy.js/dist/tippy.css'
 
 function PostPage(props) {
+
+  toast.configure()
+  const liked = (response)=>{
+
+    if(response === 'Post Unliked'){
+      toast.error(response, {
+        position:"top-center",
+        autoClose:3000,
+        hideProgressBar:true,
+        pauseOnHover:true,
+        closeOnClick:true
+    })
+    }
+    else{
+      toast.success(response, {
+        position:"top-center",
+        autoClose:3000,
+        hideProgressBar:true,
+        pauseOnHover:true,
+        closeOnClick:true
+    })
+    }
+    
+  }
+
   const [post, setPost] = useState({})
   const [comments, setComments] = useState([])
   const [likes, setlikes] = useState([])
   useEffect(() => {
     axios.get(`http://localhost:8080/posts/${props.match.params.id}`)
       .then(res => {
-        console.log(res.data)
         setPost(res.data)
         setComments(res.data.comments)
         setlikes(res.data.likes)
       }).catch(err => console.log("error fetching the post ", err))
-  })
+  },[])
+
+
+    const handleLike = async () =>{
+      try{
+        const response = await axios.post(`http://localhost:8080/posts/${props.match.params.id}/like`, {userid: localStorage.getItem('userid')})
+        
+        setlikes(response.data.likes)
+        liked(response.data.message)
+      }catch(err){
+        console.log(err)
+      }
+    }
+  
   return (
     <div>
       <NavigationBar />
@@ -86,8 +124,8 @@ function PostPage(props) {
 
               <div className="row">
                 <div className="col-md-6 like-icons-row">
-                  <Tippy content= '1'><Link><FontAwesomeIcon icon={faThumbsUp} /></Link></Tippy>
-                  <Tippy content = {comments.length}><Link><FontAwesomeIcon icon={faComment} /></Link></Tippy>
+                  <Tippy content= {likes.length > 0 ? likes.length : "0"}><Link><FontAwesomeIcon icon={faThumbsUp} onClick = {()=> handleLike()} /></Link></Tippy>
+                  <Tippy content = {comments.length > 0 ? comments.length : '0'}><Link><FontAwesomeIcon icon={faComment} /></Link></Tippy>
                 </div>
 
               </div>

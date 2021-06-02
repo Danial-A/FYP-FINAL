@@ -28,7 +28,8 @@ function SignUp(props) {
         emailid: '',
         username: '',
         password: '',
-        dob: ''
+        dob: '',
+        profileImage:'/images/Dp.svg'
        
 
     }
@@ -195,10 +196,7 @@ function SignUp(props) {
                                             />
                                              {formik.errors.dob && formik.touched.dob ? <div className="error"><p>{formik.errors.dob}</p></div> : null}
                                         </Form.Group>
-                                    </div>
-
-
-
+                                    </div>                    
                                 </div>
 
 

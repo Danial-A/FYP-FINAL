@@ -5,9 +5,22 @@ import Conversation from './conversations/Conversation'
 import Message from './message/Message'
 import axios from 'axios'
 import {io} from 'socket.io-client'
+import {toast } from 'react-toastify'
 import './newMessenger.css'
 
 function NewMessenger() {
+
+    toast.configure()
+    const NewChat = (message) =>{
+        toast.success(message, {
+            position:"top-center",
+            autoClose:2000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+        })
+}
+
     const userid = localStorage.getItem('userid')
     const [user,setUser] = useState(null)
     const [conversations,setConversations ] = useState([])
@@ -19,6 +32,30 @@ function NewMessenger() {
     const socket = useRef()
     const scrollRef = useRef()
 
+    const [users, setUsers] = useState([])
+    const [searchText, setSearchText] = useState("")
+    const [filteredUsers, setFilteredUsers] = useState([])
+
+    //Filter user search results
+    useEffect(()=>{
+        if(users.length !== 0){
+            const result = users.filter(u=> (u.username.includes(searchText) || u.firstname.includes(searchText)) && searchText !== '' )
+            setFilteredUsers(result)
+          
+        }
+    },[searchText])
+
+    //create new chat
+    const createChat = async (uid) =>{
+        try{
+            const response = await axios.post(`http://localhost:8080/chats/create`, {senderId:userid, recieverId: uid})
+            NewChat(response.data.message)
+            setConversations([...conversations, response.data.chat])
+        }catch(err){
+            console.log(err)
+        }
+    }
+
     useEffect(()=>{
         socket.current = io("ws://localhost:8080")
         socket.current.on('getMessage', data=>{
@@ -29,7 +66,7 @@ function NewMessenger() {
             })
         })
     },[])
-
+    
     useEffect(() => {
         arrivalMessage && currentChat?.participants.includes(arrivalMessage.sender) &&
         setMessages(prev => [...prev, arrivalMessage])
@@ -53,20 +90,37 @@ function NewMessenger() {
       }
       getConversations()
     }, [user?._id])
+
+
+
    useEffect(() => {
     const getUser =async () =>{
-        axios.get(`http://localhost:8080/users/${userid}`)
-        .then(res=> setUser(res.data))
-        .catch(err=> console.log(err))
+        try{
+            const res = await axios.get(`http://localhost:8080/users/${userid}`)
+            const all = [ ...res.data.followers, ...res.data.following]
+            const unique = Array.from(new Set(all.map(a=> a._id))).map(id => {
+                return all.find(a=> a._id === id)
+            })
+            setUsers(unique)
+            setUser(res.data)
+            // //filter the participants of conversations
+            // const participants = conversations.map(c => [...c.participants])
+            // const merged =await participants.flat(1)
+            // const final =await [... new Set(merged)] 
+            // console.log(final)
+            // setUser(res.data)
+        }catch(err){
+            console.log(err)
+        }
     }
     getUser()
    }, [])
 
+
    //get messages
    useEffect(()=>{
     const getMessages = async () =>{
-        try{
-            
+        try{          
             const res = await axios.get(`http://localhost:8080/chats/${currentChat?._id}/`)
             setMessages(res.data.messages)
         }catch(err){
@@ -106,7 +160,25 @@ function NewMessenger() {
         <div className = "messenger">
             <div className="chatMenu">
                 <div className="chatMenuWrapper">
-                    <input type="text" placeholder = "Search for friends" className="chatMenuInput" />
+                    <input type="text" placeholder = "Search for friends" className="chatMenuInput" 
+                        value = {searchText}
+                        onChange = {e => setSearchText(e.target.value)}
+                    />
+                    <div className="users-container">
+                        {
+                            filteredUsers.length > 0 ? filteredUsers.map(u => (
+                                <div className = "conversation" style = {{backgroundColor:"#cad3de", display :"flex", justifyContent:"space-between"}}>
+                                <div>
+                                <img
+                                  className="conversationImg"
+                                  src= "/images/Dp.svg"
+                                />
+                                <span className="conversationName">{u.firstname} {u.lastname}</span></div>
+                                <button className = "btn btn-danger" onClick = {()=> createChat(u._id)}>Create Chat?</button>
+                                </div>
+                            )) : searchText === '' ? <div className = "no-search-text">Enter search text</div>  : <div className = "no-search-text">No users found</div> 
+                        }
+                    </div>
                     {
                         conversations.map(c=>(
                             <div onClick = {() => setCurrentChat(c)}>

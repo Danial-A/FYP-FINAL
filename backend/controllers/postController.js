@@ -60,22 +60,32 @@ module.exports.like_unlike = (req,res)=>{
     const userid = req.body.userid
     Post.findById(req.params.id)
     .then(post=>{
-        const string_likes = post.likes.map( id => id.toString())
-        const like_found = string_likes.filter(id => {
-            id != userid
-        })
-        if(like_found.length === 0){
-            post.likes.push(mongoose.Types.ObjectId(userid))
-            console.log(typeof(string_likes[1]))
-            //post.save()
-            res.json({
-                likes:string_likes[1],
-                user:userid
-            })
-        }else{
+        const like_found= post.likes.filter(p=> p.toString() === userid)
+        if(like_found.length > 0){ 
             post.likes.remove(mongoose.Types.ObjectId(userid))
             post.save()
-            res.json("unliked")
+            .then(res.json({
+                message:"Post Unliked",
+                likes : post.likes
+            }))
+            .catch(err=> res.status(400).json({
+                err,
+                message:"Error removing like"
+            }))
+        }else{
+            post.likes.push(mongoose.Types.ObjectId(userid))
+            post.save()
+            .then(res.json({
+                message:"Post liked!",
+                likes : post.likes
+            }))
+            .catch(err=>{
+                res.status({
+                    message:"error liking the post",
+                    err,
+                    
+                })
+            })
         }
     })
     .catch(err=> res.status(400).json("Error Finding the post ",err))
@@ -165,7 +175,7 @@ module.exports.comments_nuke = (req,res)=>{
 //Get posts for a specific user
 module.exports.user_posts = (req,res)=>{
     
-    Post.find({"author":req.body.author}).sort({createdAt:-1}).exec((err,posts)=>{
+    Post.find({"author":req.body.author}).populate("author", "username").sort({createdAt:-1}).exec((err,posts)=>{
         if(err)  res.status(400).json({error:err, message:"Error locating the posts"})
         else res.json(posts)
     })

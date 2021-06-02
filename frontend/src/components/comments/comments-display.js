@@ -46,7 +46,6 @@ function DisplayComments(props) {
                             </div>
                             <div className="col-md-2 mm">
                             <small>
-                            {console.log(typeof(comment.userid))}
                                     <DropdownButton
 
                                     title=""

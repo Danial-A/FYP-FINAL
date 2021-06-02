@@ -1,15 +1,38 @@
+import axios from 'axios'
 import React from 'react'
+import {toast} from 'react-toastify'
 import './UserInterests.css'
-function UserInterests({interests}) {
-    const classes = ['#f7d0cd', '#f7d0cd', '#d3f7cd','#a1ced6','#d594f7']
+function UserInterests({interests, setInterests}) {
+    toast.configure()
+    const deleteLanguage = (message)=>{
+        toast.warning(message, {
+            position:"top-center",
+            autoClose:3000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+        })
+    }
+
+
     const filtered = [... new Set(interests)]
+
+    const handleRemove = async(interest) =>{
+        const response = window.confirm("Remove language?")
+        if(response){
+            const remove =await axios.post(`http://localhost:8080/users/${localStorage.getItem('userid')}/interests/remove`,{interest})
+            setInterests([...remove.data.interests])
+            deleteLanguage(remove.data.message)
+            
+        }
+    }
     return (
         <>
             {
                 filtered.map(i=>(
-                    <div className = "interest"><span className = "tag" style ={{
-                        backgroundColor:`${classes[Math.floor(Math.random() * classes.length)]}`
-                    }}>{i.toUpperCase()}</span></div> 
+                    <div className = "interest" onClick = {()=> handleRemove(i)}><span className = "tag" style ={{
+                        backgroundColor:"#1c2237"
+                    }}>{i?.toUpperCase()}</span></div> 
                 ) )
             }
         </>

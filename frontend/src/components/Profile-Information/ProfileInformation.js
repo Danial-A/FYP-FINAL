@@ -47,11 +47,11 @@ function ProfileInformation() {
             </div>
             <div className="information-section">
                 <ul>
-                    <li><Link><FontAwesomeIcon icon = {faEdit} className = "icon"/>Posts <Badge variant="info">{(posts.length)}</Badge></Link></li>
+                    <li><Link><FontAwesomeIcon icon = {faEdit} className = "icon"/>Posts <Badge variant="info">2</Badge></Link></li>
                     <li><Link><FontAwesomeIcon icon = {faThumbsUp} className = "icon"/>Likes <Badge variant="info">7</Badge></Link></li>
                 </ul>
                 <div className="followers-following-section">
-                    <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
+                    <Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
                         <Tab eventKey="home" title="Followers">
                         <ol style = {{color:"white"}} className = "follower-section">
                         {

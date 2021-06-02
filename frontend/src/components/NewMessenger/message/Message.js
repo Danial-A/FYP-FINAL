@@ -8,7 +8,7 @@ function Message({message,own}) {
       <div className="messageTop">
         <img
           className="messageImg"
-          src="/images/danial.jpg"
+          src="/images/Dp.svg"
           alt=""
         />
         <p className="messageText">{message.text}</p>

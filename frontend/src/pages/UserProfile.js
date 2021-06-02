@@ -20,8 +20,19 @@ function UserProfile() {
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(3);
 
+    const uid = localStorage.getItem('userid')
+    const [user,setUser] = useState({})
+    const [profileImg, setProfileImg] = useState('')
+    useEffect(async()=>{
+        try{
+            const response = await axios.get(`http://localhost:8080/users/${uid}`)
+            setUser(response.data)
+            setProfileImg(`http://localhost:8080/${response.data.profileImage}`)
+        }catch(err){
+            console.log(err)
+        }
+    })
     useEffect(()=>{
-  
         const fetchPosts = async ()=>{
             setLoading(true);
             const response = await axios.post('http://localhost:8080/posts/user/posts', {"author": localStorage.getItem('userid')});
@@ -41,16 +52,15 @@ function UserProfile() {
     const paginate = (pageNumber)=>{
         setCurrentPage(pageNumber)
     }
-    console.log(posts)
     return (
         <div style = {{backgroundColor: '#1c2237', height:"auto"}}>
             <NavigationBar/>
             <div className="cover-container">
                 <div className="cover-image">
-                    <img src="/images/background.jpg" alt=""/>
+                    <img src="/images/white.png" alt=""/>
                 </div>
                 <div className="profile-image">
-                    <img src="/images/Dp.svg" alt=""/>
+                    <img src={profileImg && profileImg !== ''? profileImg : "/images/Dp.svg"} alt="" style = {{objectFit:"cover"}}/>
                 </div>
             </div>
             <Container fluid className = "user-information-section">

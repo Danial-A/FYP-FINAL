@@ -16,6 +16,8 @@ const io = socketio(server,{
 const port = process.env.PORT || 8080;
 //Connect to the database
 
+
+
 const db = mongoose.connection;
 db.on('open', ()=>{console.log("Database connection successful")})
 db.on('error', console.error.bind(console, "Connection Error: "))
@@ -30,7 +32,7 @@ const postRoutes = require('./routes/postRoutes' )
 const groupRoutes = require('./routes/groupsRoutes')
 const roomRoutes = require('./routes/roomRoutes')
 const messageRoutes = require('./routes/messageRoutes')
-const privateRoutes = require('./routes/privateChatRoutes')
+const privateRoutes = require('./routes/privateChatRoutes');
 
 //API Middleware
 app.use('/users', userRoutes)
@@ -39,6 +41,7 @@ app.use('/groups',groupRoutes)
 app.use('/rooms',roomRoutes)
 app.use('/chats',privateRoutes)
 app.use('/messages',messageRoutes)
+app.use('/uploads', express.static('uploads'))
 
 
 
@@ -64,8 +67,8 @@ const addUser = (userId, socketId) => {
 mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true, useUnifiedTopology:true})
 .then(res=>{
    io.on('connection', (socket)=>{
-       console.log('User Connected');
-
+       console.log("A user connected");
+        socket.emit("me", socket.id)
        //add user to online users list
        socket.on('addUser', (userId)=>{
            addUser(userId, socket.id);
@@ -81,6 +84,20 @@ mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true,
                text
            })
        })
+
+       //audio/video call functionality
+       socket.on("callDisconnect", ()=>{
+           socket.broadcast.emit("Call ended")
+       })
+
+       socket.on('callUser', (data)=>{
+           io.to(data.userId).emit("callUser", {signal:data.signalData, from: data.from, name:data.name})
+       })
+
+       socket.on("answerCall", (data) => {
+		io.to(data.to).emit("callAccepted", data.signal)
+	    })
+
 
        //on user disconnect 
        socket.on('disconnect', ()=>{

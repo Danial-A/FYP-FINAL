@@ -9,6 +9,10 @@ function GroupsDisplay() {
     const userid = localStorage.getItem('userid')
     const [groups,setGroups] = useState([])
 
+    //group creation state
+    const [title,setTitle] = useState('')
+    const [description,setDescription]= useState('')
+
     //Modal
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -23,9 +27,8 @@ function GroupsDisplay() {
         }
         
     },[userid])
-    console.log(groups)
     return (
-        <div style = {{color:"white"}} className  = "groups-main-container container">
+        <div style = {{color:"white", marginBottom:"10vh"} } className  = "groups-main-container container">
             <div className="main-heading">
                 <h4>Your Groups</h4>
                 {groups?.length > 0 ? (
@@ -38,6 +41,8 @@ function GroupsDisplay() {
                         </Link></div>
                     ))
                 ) : <div className = "text-crimson">You have not joined any groups yet... <span className = "Create-Group" onClick= {handleShow}>Create new group?</span></div> }
+                <div style = {{textAlign:"center"}}><button className = "btn btn-danger" onClick = {handleShow}>Create New Group?</button></div>
+                 
             </div>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -61,7 +66,7 @@ function GroupsDisplay() {
                     Close
                 </Button>
                 <Button variant="danger" onClick={handleClose}>
-                    Save Changes
+                    Create!
                 </Button>
                 </Modal.Footer>
             </Modal>

@@ -76,3 +76,25 @@
     cursor: default;
 }
 
+.no-search-text{
+    font-size: 20px;
+    color: crimson;
+}
+
+.user-result{
+    display: flex;
+    justify-content: space-between;
+    width: 70%;
+    margin: 20px 0;
+    border: 1px solid black;
+    padding:  5px 10px;
+}
+.username-text{
+    font-size: 16px;
+    font-weight: bold;
+}
+.users-container{
+    border-bottom: 1px solid black;
+    margin-bottom: 20px;
+}
+

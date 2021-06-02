@@ -31,11 +31,7 @@ const groupModel = new schema({
             type: mongoose.Schema.Types.ObjectId,
             ref:'users'
         }
-    ],
-    groupChatId :{
-        type: mongoose.Types.ObjectId,
-        ref: "rooms"
-    }
+    ]
 },{
     timestamps :true,
     autoIndex:false

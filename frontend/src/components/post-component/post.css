@@ -93,3 +93,12 @@
     font-size: 18px;
 }
 
+.post-image{
+  
+}
+
+.post-image img{
+    width: 100%;
+    object-fit: cover;
+}
+

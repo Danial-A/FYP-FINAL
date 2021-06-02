@@ -3,8 +3,10 @@ const Groups = require('../models/groupModel')
 const {userLoginValidation,userRegisterValidation} = require('../validation/validationSchema')
 const bcrypt = require('bcryptjs')
 const jwt  = require('jsonwebtoken');
-const e = require('express');
 const mongoose = require('mongoose')
+const multer = require('multer');
+const e = require('express');
+
 
 module.exports.get_all = (req,res)=>{
     User.find({}, (err,users)=>{
@@ -40,13 +42,16 @@ module.exports.add_new_user = async (req,res)=>{
    const emailid = req.body.emailid;
    const username = req.body.username;
    const dob = Date.parse(req.body.dob)
+   const profileImage = req.body.profileImage
    const newUser = new User({
        firstname,
        lastname,
        emailid,
        username,
        password: hashedPassword,
-       dob
+       dob,
+       profileImage
+
    }); 
    newUser.save()
    .then(()=> res.json("User sign up successful").redirect('http://localhost:3000/home'))
@@ -65,14 +70,14 @@ module.exports.user_login = async (req,res)=>{
         //Check if the username exists
         const user = await User.findOne({username: req.body.username})
         if(!user){
-            return res.status(400).send("Incorrect Username Entered...")
+            return res.status(401).send("Incorrect Username Entered...")
         }
         //Check valid password
         const validPassword = await bcrypt.compare(req.body.password, user.password);
-        if(!validPassword) return res.status(400).send('Invalid Password...');
+        if(!validPassword) return res.status(401).send('Invalid Password...');
         //Token creation 
         const token = jwt.sign({_id:user._id}, process.env.TOKEN_SECRET)
-        res.header('auth-token', token).send({ token , userid:  user._id , username : user.username })
+        res.header('auth-token', token).send({ token , userid:  user._id , username : user.username ,message:"Sign in successful!"})
  
 
    }catch(err) {
@@ -109,7 +114,7 @@ module.exports.following_follower = (req,res)=>{
             })
         }
         else {
-            res.json(`You are already following ${userid}`)
+            res.status(202).json(`You are already following this user`)
         }
     })
     .catch(err=>{res.status(400).json("Error: "+err)})
@@ -147,6 +152,49 @@ module.exports.remove_follower = (req,res)=>{
         }
     })
     .catch(err=>{res.status(400).json("Error: "+err)})
+}
+
+//remove following
+module.exports.remove_following = (req,res)=>{
+    const userid = req.body.userid
+    User.findById(req.params.id)
+    .then(user=>{
+        const user_found = user.following.filter(u=> u.toString() === userid)
+        if(user_found.length !== 0){
+            User.findById(userid, (err,targetUser)=>{
+                if(err) res.status(400).json({
+                    message:"error finding target user",
+                    error: err
+                })
+                if(targetUser === null){
+                    res.json("No user found")
+                }
+                else{
+                    user.following.remove(mongoose.Types.ObjectId(userid))
+                    user.save()
+                    .then(()=>{
+                        targetUser.followers.remove(mongoose.Types.ObjectId(req.params.id))
+                        targetUser.save()
+                        .then(res.json("User removed from following users list!"))
+                        .catch(err=> res.status(400).json({
+                            message:"Error removing user from followers list",
+                            err
+                        }))
+                    })
+                    .catch(err=> res.status(400).json({
+                        message:"Error removing user from following list",
+                        err
+                    }))
+                }
+            })
+        }
+        else{
+            res.json("This user is not in your following list")
+        }
+    }).catch(err=> res.status(400).json({
+        message:"error finding the main user",
+        err
+    }))
 }
 
 //Get user by username
@@ -449,12 +497,102 @@ module.exports.add_interest = (req,res) =>{
         else{
             user.interests.push(req.body.interest)
             user.save()
-            .then(res.json("Interest added for user"))
+            .then(res.json({
+                message:"Interest added for user",
+                interest: req.body.interest
+            }))
             .catch(err=>{
                 res.status(400).json({
                     message:"Error adding interest",
                     err
                 })
+            })
+        }
+    })
+}
+
+//remove interest
+module.exports.remove_interest = (req,res)=>{
+    User.findById(req.params.id, "interests", (err,user)=>{
+        if(err) res.status(400).json({
+            message:"Error finding the user",
+            err
+        })
+        else{
+            user.interests.remove(req.body.interest)
+            user.save()
+            .then(res.json({
+                message:"language removed",
+                interests : user.interests
+            }))
+            .catch(err=>{
+                res.status(400).json({
+                    message:"Error removing interest",
+                    err
+                })
+            })
+        }
+    })
+}
+
+// User image upload 
+module.exports.image_upload = (req,res)=>{
+    User.findById(req.params.user, (err,user)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"Error getting user"
+        })
+        else{
+            if(req.file){
+                user.profileImage = req.file.path
+                user.save()
+                .then(res.json({
+                    message:"Image uploaded",
+                    image:req.file
+                }))
+                .catch(err => res.status(204).json({
+                    message:"Error uploading the image",
+                    err
+                }))
+            }else{
+                res.json({
+                    Error:"error ",
+                    file:req.file
+                })
+            }
+        }
+    })
+}
+
+//user recommendations
+module.exports.user_recommendations = (req,res)=>{
+    User.find({}, (err,users)=>{
+        if(err) res.status(400).json({
+            message:"Error finding the users",
+            err
+        })
+        else{
+            User.findById(req.params.id).populate('following').exec((err,user)=>{
+                if(err) res.status(400).json({
+                    message:"Error finding the users",
+                    err
+                })
+                else{
+                    User.findById(req.params.id ,(err, thisuser)=>{
+                        if(err) res.status(400).json({
+                            message:"Error finding the users",
+                            err
+                        })
+                        else{
+                            const all_users = [...user.following, thisuser]
+                            const all_user_id = all_users.map(i=> i._id)
+                            const users_id = users.map(u=> u._id)
+                            const result = users_id.filter(f=> all_user_id.includes(f))
+                            res.json(result)
+
+                        }
+                    })
+                }
             })
         }
     })
