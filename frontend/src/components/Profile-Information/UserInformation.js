@@ -30,12 +30,12 @@ function UserInformation() {
     const [interests, setInterests] = useState([])
     const [interest, setInterest] = useState("")
     const [file, setFile] = useState()
+    const [profileImg, setProfileImg] = useState()
   
     //Show hide modal
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
 
     //Profile image modal
     const [profile, setProfileShow] = useState(false);
@@ -47,10 +47,10 @@ function UserInformation() {
             const UserInformation = await axios.get(`http://localhost:8080/users/${user}`)
             setUser(UserInformation.data)
             setInterests(UserInformation.data.interests)
+            setProfileImg(`http://localhost:8080/${UserInformation.data.profileImage}`)
         }
         getUserInfo()
-
-    },[])
+    })
 
     //Edit user information
     const initialValues = {
@@ -127,6 +127,7 @@ function UserInformation() {
                 </ul> */}
 
                 <Card style={{ width: '18rem' }}>
+                <Card.Img variant="top" src={profileImg && profileImg !== ''? profileImg : "/images/Dp.svg"} />
                     <ListGroup variant="flush">
                         <ListGroup.Item><FontAwesomeIcon icon={faUser} className="icon" />Name: <pre> {User.firstname} {User.lastname}</pre></ListGroup.Item>
                         <ListGroup.Item><FontAwesomeIcon icon={faUsers} className="icon" />Username:<pre> {User.username}</pre></ListGroup.Item>
@@ -137,7 +138,7 @@ function UserInformation() {
                     <button className = "btn btn-danger" onClick = {profileShow}>Change Profile Picture?</button>
                 </Card>
             </div>
-            <div style = {{backgroundColor:"white", borderRadius:"10px"}} className = "mt-4">
+            <div style = {{backgroundColor:"white", borderRadius:"10px", maxWidth:"68%"}} className = "mt-4">
 
             <h5 style ={{textAlign:"center"}}>Preferred Languages</h5>
             <div className="interests">

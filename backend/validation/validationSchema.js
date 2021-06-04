@@ -11,8 +11,8 @@ module.exports.userLoginValidation = (data)=>{
 
  module.exports.postValidationSchema = (data) =>{
      const schema = Joi.object({
-         title: Joi.string().required().min(12),
-         body:Joi.string().required().min(80),
+         title: Joi.string().required().min(6),
+         body:Joi.string().required().min(10),
          author: Joi.string().required(),
          postType:Joi.string().required()
 
@@ -37,7 +37,7 @@ module.exports.userLoginValidation = (data)=>{
 module.exports.groupValidationSchema = (data) =>{
     const schema = Joi.object({
         title:Joi.string().required().min(6),
-        description:Joi.string().required().min(20)
+        description:Joi.string().required().min(6)
     })
     return schema.validate(data)
 }

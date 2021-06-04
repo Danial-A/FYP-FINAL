@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import './followcard.css'
 import {Modal} from 'react-bootstrap'
 import moment from 'moment'
@@ -6,7 +6,6 @@ import axios from 'axios'
 import {toast} from 'react-toastify'
 import 'bootstrap/dist/css/bootstrap.min.css'
 function FollowCard({user}) {
-
     toast.configure()
     const removeUserToast  = (message)=>{
         toast.success(message, {
@@ -18,6 +17,8 @@ function FollowCard({user}) {
         })
     }
 
+
+    const [image,setImage] = useState('')
     const [show, setShow] = useState(false);
     const currentUser = localStorage.getItem('userid')
     const handleClose = () => setShow(false);
@@ -36,6 +37,12 @@ function FollowCard({user}) {
         })
         .catch(err=> console.log(err))
     }
+
+    useEffect(()=>{
+        if(user.profileImage){
+            setImage(`http://localhost:8080/${user.profileImage}`)
+        }
+    },[user])
     return (
         <>
         <div className="follow-card" onClick = {handleShow}>
@@ -49,7 +56,7 @@ function FollowCard({user}) {
             <Modal.Body> 
             <div className="user-modal-container">
             <div className="user-modal-image-container mb-3">
-                <img src="/images/dp.svg" alt="" height = "150"/>
+                <img src = {image ? image : "/images/Dp.svg"} alt="" height = "150"/>
             </div>
                 <p>Username : {user.username}</p>
                 <p>Email Id: {user.emailid}</p>

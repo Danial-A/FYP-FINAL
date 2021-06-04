@@ -34,6 +34,7 @@ router.post('/:id/update', userController.update_user_information)
 //Join new group
 router.post("/:id/groups/join", userController.join_group)
 //leave user group
+router.post("/:id/groups/leave", userController.leave_group)
 
 //get all user groups
 router.get('/:id/groups',userController.get_user_groups)

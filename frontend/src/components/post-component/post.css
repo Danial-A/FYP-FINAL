@@ -93,8 +93,14 @@
     font-size: 18px;
 }
 
-.post-image{
-  
+.icons-post{
+    margin-right: 2vw;
+}
+
+.icons-post:hover{
+    cursor: pointer;
+    color: crimson;
+    transition: 0.3s ease;
 }
 
 .post-image img{
@@ -102,3 +108,7 @@
     object-fit: cover;
 }
 
+.icons-row{
+    display: flex;
+    justify-content: flex-end;
+}

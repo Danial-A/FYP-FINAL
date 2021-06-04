@@ -67,7 +67,7 @@ const addUser = (userId, socketId) => {
 mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true, useUnifiedTopology:true})
 .then(res=>{
    io.on('connection', (socket)=>{
-       console.log("A user connected");
+       console.log(socket.rooms);
         socket.emit("me", socket.id)
        //add user to online users list
        socket.on('addUser', (userId)=>{
@@ -84,6 +84,17 @@ mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true,
                text
            })
        })
+
+       //send and get message to room
+       socket.on('groupMessage', ({senderId, room, text})=>{
+        io.in(room).emit("getGroupMessage", {
+            senderId,
+            text
+        })
+    })
+    socket.on('createRoom', (room)=>{
+        socket.join(room)
+    })
 
        //audio/video call functionality
        socket.on("callDisconnect", ()=>{

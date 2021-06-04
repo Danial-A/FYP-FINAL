@@ -64,6 +64,17 @@ function PostPage(props) {
         console.log(err)
       }
     }
+
+    const getResult = async (gid) =>{
+      try{
+        const response = await axios.get(`https://recommendthis.herokuapp.com/rec?grp=${gid}`, {
+          headers: {"Access-Control-Allow-Origin": "*"}
+        })
+        console.log(response.data)
+      }catch(err){
+        console.log(err)
+      }
+    }
   
   return (
     <div>
@@ -147,10 +158,10 @@ function PostPage(props) {
         <div className="col-11">
           </div>
           <div className="col-1">
-          <Button variant="danger">
-        <Link to="/Home"
+          <Button variant="danger" onClick = {() => getResult()}>Get results
+        {/*<Link to="/Home"
           style={{ textDecoration: "none", color: "white" }}>
-          Back</Link>
+            Back</Link>*/}
       </Button>
             </div>
           </div>

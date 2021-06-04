@@ -5,23 +5,23 @@ import {Card} from 'react-bootstrap'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
-function UserPost(TotalPosts) {
+function UserPost({setTotalPosts, posts}) {
 
-    const { totalPosts, setPosts } = useState(TotalPosts);
     const initialValues = {
         title: '',
         body: '',
         author: localStorage.getItem('userid'),
         postType: 'profile'
     }
-    const onSubmit = (values, onSubmitProps) => {
-        axios.post('http://localhost:8080/posts/add', values)
-            .then(res => {
-                window.alert("Post Added!");
-                setPosts([...totalPosts])
-                onSubmitProps.resetForm()
-            })
-            .catch(err => { console.log("Error: " + err) })
+    const onSubmit = async (values, onSubmitProps) => {
+        try{
+            const res =await axios.post('http://localhost:8080/posts/add', values)
+            console.log(res.data)
+            setTotalPosts([...posts, res.data.post])
+            onSubmitProps.resetForm()
+        }catch(err){
+            console.log(err)
+        }
     }
     const validationSchema = Yup.object({
         title: Yup.string().required('This field is required..'),

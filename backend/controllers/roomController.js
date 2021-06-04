@@ -71,7 +71,7 @@ module.exports.get_room_by_id = (req,res)=>{
         path:"messages",
         populate:{
             path:'sender',
-            select:"firstname lastname dob username"
+            select:"firstname lastname dob username profileImage"
         }
     })
     .then(room=> res.json(room))
@@ -96,7 +96,7 @@ module.exports.new_message_to_room = (req,res)=>{
             room.messages.push(message._id)
             room.save()
             .then(r=>res.json({
-                messages: r.messages,
+                message: message,
                 message:"New message in room"
             })).catch(err=> res.status(400).json({
                 err,message:"Error adding new message to room"

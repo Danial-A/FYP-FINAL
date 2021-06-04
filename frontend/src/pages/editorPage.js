@@ -1,4 +1,5 @@
-import React, {useState, useeffect} from 'react'
+import React, {useState, useRef} from 'react'
+import {Modal, Button} from 'react-bootstrap'
 import '../components/editor-components/editor.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {useParams} from 'react-router-dom'
@@ -8,6 +9,7 @@ import Editor from "@monaco-editor/react";
 import OutputSection from '../components/editor-components/outputsection'
 import VideoSection from '../components/editor-components/videosection'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useScreenshot } from 'use-react-screenshot'
 import 'react-tabs/style/react-tabs.css';
 
 function EditorPage() {
@@ -16,6 +18,20 @@ function EditorPage() {
     const [js,setJS] = useState('//Write your javascript here')
     const [tabIndex, setTabIndex] = useState(0);
     const [theme, setTheme] = useState('vs-dark')
+    const videoRef = useRef(null)
+    const [image,takeScreenShot] = useScreenshot()
+
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const getImage =async () => {
+        await takeScreenShot(videoRef.current)
+        handleShow()
+    }
+
     const toggleTheme = () => {
         if (theme === 'light') {
             setTheme('vs-dark')
@@ -73,15 +89,18 @@ function EditorPage() {
                       </Tabs>
                         </div>
                             <div className="col-md-6">
+                            <button className = "btn btn-danger"
+                                onClick = {getImage}
+                            >Take Screenshot</button>
                                 <div className="row">
-                                    <div className="col video-section">
-                                        <VideoSection video = {id}/>
+                                    <div className="col video-section" ref = {videoRef} >
+                                        <VideoSection video = {id}  />
                                     </div>
 
                                 </div>
                                 <div className="row">
-                                    <div className="col output-section">
-                                        <OutputSection htmlCode = {html} cssCode = {"<style>"+css+"</style>"} jsCode = {"<script>"+js+"</script>"}/>
+                                    <div className="col output-section" >
+                                <OutputSection htmlCode = {html} cssCode = {"<style>"+css+"</style>"} jsCode = {"<script>"+js+"</script>"}/>
                                     </div>
                                 </div>
 
@@ -91,6 +110,22 @@ function EditorPage() {
                     </div>
                     
             <Footer />
+
+            <>
+            <Button variant="primary" onClick={handleShow}>
+              Launch demo modal
+            </Button>
+      
+            <Modal show={show} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Modal heading</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                        <img src={image} alt="screenshot" width = "800"  height = "600px"/>
+              </Modal.Body>
+             
+            </Modal>
+          </>
         </div>
     )
 }

@@ -112,11 +112,6 @@ function ChatOnline({current, onlineUsers , setCurrentChat}) {
       connectionRef.current.destroy()
     }
 
-    //Modal
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
     useEffect(()=>{
         const getFriends = async ()=>{
             try{
@@ -161,30 +156,11 @@ function ChatOnline({current, onlineUsers , setCurrentChat}) {
             </div>
             <span className="chatOnlineName">{user.firstname} {user.lastname}</span>
           </div>
-          <div className="callFriendIconWrapper">
-            <button className = "btn btn-danger call-btn mt-3" onClick = {handleShow}>Call <FontAwesomeIcon icon ={faPhone}/></button>
-          </div>
           </div>
           )
         )}
         </div>
-        <>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Zoomish</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="video">
-            {stream &&  <video playsInline muted ref={myVideo} autoPlay style={{ width: "300px" }} />}
-            </div>
-            <div className="video">
-					    {callAccepted && !callEnded ?
-              <video playsInline ref={userVideo} autoPlay style={{ width: "300px"}} />:
-            null}
-				  </div>
-          </Modal.Body>
-        </Modal>
-      </>
+       
         </div>
         
     )

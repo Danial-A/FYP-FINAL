@@ -9,7 +9,6 @@ import {toast } from 'react-toastify'
 import './newMessenger.css'
 
 function NewMessenger() {
-
     toast.configure()
     const NewChat = (message) =>{
         toast.success(message, {
@@ -36,12 +35,15 @@ function NewMessenger() {
     const [searchText, setSearchText] = useState("")
     const [filteredUsers, setFilteredUsers] = useState([])
 
+
     //Filter user search results
     useEffect(()=>{
         if(users.length !== 0){
             const result = users.filter(u=> (u.username.includes(searchText) || u.firstname.includes(searchText)) && searchText !== '' )
             setFilteredUsers(result)
-          
+
+            
+            
         }
     },[searchText])
 
@@ -90,8 +92,6 @@ function NewMessenger() {
       }
       getConversations()
     }, [user?._id])
-
-
 
    useEffect(() => {
     const getUser =async () =>{

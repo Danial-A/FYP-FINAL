@@ -21,36 +21,70 @@ module.exports.create_group =async (req,res)=>{
     newGroup.save()
     .then((group)=> {
         group.admins.push(mongoose.Types.ObjectId(userid))
-        group.save()
-        .then(response=>{
-        Users.findById(userid, "groups", (err,user)=>{
-            if(err) return res.status(400).json({
-                err,
-                message:"Error finding user"
-            })
-            else if(user === null) return res.json("No user exists")
-            else{
-                user.groups.push(response._id)
-                user.save()
-                .then(res.json("New group created, user added as admin, group added to user groups list"))
-                .catch(err=> res.status(400).json({
-                    err,
-                    message:"Error adding group to user list"
-                }))
-            }
+        const participants = [mongoose.Types.ObjectId(userid)]
+        const newRoom = new Rooms({
+            name:group.title,
+            participants: participants
         })
-    }).catch(err=> res.status(400).json({
-        err,
-        message:"error creating the group"
-    }))
+        newRoom.save()
+        .then(room=>{
+            group.chatid = room._id
+            group.save()
+            .then(response=>{
+                Users.findById(userid, "groups", (err,user)=>{
+                    if(err) return res.status(400).json({
+                        err,
+                        message:"Error finding user"
+                    })
+                    else if(user === null) return res.json("No user exists")
+                    else{
+                        user.groups.push(response._id)
+                        user.save()
+                        .then(res.json("New group created, user added as admin, group added to user groups list, chat added to group"))
+                        .catch(err=> res.status(400).json({
+                            err,
+                            message:"Error adding group to user list"
+                        }))
+                    }
+                })
+            }).catch(err=> res.status(400).json({
+                message:"error adding chat id",
+                err
+            }))
+        }).catch(err =>  res.status(400).json({
+            err,
+            message:"error creating room"
+        }))
+
     }).catch(err=>{
         res.status(400).json({
-            message:"Error creating/saving the chat room for this group",
+            message:"Error creating group",
             err
         })
     })
     
-    
+        //     group.save()
+    //     .then(response=>{
+    //     Users.findById(userid, "groups", (err,user)=>{
+    //         if(err) return res.status(400).json({
+    //             err,
+    //             message:"Error finding user"
+    //         })
+    //         else if(user === null) return res.json("No user exists")
+    //         else{
+    //             user.groups.push(response._id)
+    //             user.save()
+    //             .then(res.json("New group created, user added as admin, group added to user groups list"))
+    //             .catch(err=> res.status(400).json({
+    //                 err,
+    //                 message:"Error adding group to user list"
+    //             }))
+    //         }
+    //     })
+    // }).catch(err=> res.status(400).json({
+    //     err,
+    //     message:"error creating the group"
+    // }))
 }
 
 //Get All groups
@@ -266,7 +300,24 @@ module.exports.add_members = (req,res)=>{
                         else{
                             user.groups.push(group._id)
                             user.save()
-                            .then(res.json("New member added to group and group added to user's list"))
+                            .then(response=>{
+                                Rooms.findById(group.chatid, (err,room)=>{
+                                    if(err) res.status(400).json({
+                                        err,
+                                        message:"Error finding chat room"
+                                    })
+                                    else{
+                                        room.participants.push(response._id)
+                                        room.save()
+                                        .then(()=>{
+                                            res.json("User added to group members, group added to user list, user added to room participants list")
+                                        })
+                                        .catch(err=> res.status(400).json({
+                                            message:"Error adding user to room",err
+                                        }))
+                                    }
+                                })
+                            })
                             .catch(err=> res.status(400).json({
                                 message:"Error addding the group to list",
                                 err
@@ -315,7 +366,7 @@ module.exports.get_all_members_and_admins = (req,res)=>{
 
 //find group by id
 module.exports.find_by_id = (req,res)=>{
-    Group.findById(req.params.id).populate("admins groupMembers", "fristname lastname username dob").populate({
+    Group.findById(req.params.id).populate("admins groupMembers", "firstname lastname username profileImage").populate({
         path:"posts",
         populate:{
             path:"author",

@@ -52,7 +52,7 @@ function ProfileInformation() {
                 </ul>
                 <div className="followers-following-section">
                     <Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
-                        <Tab eventKey="home" title="Followers">
+                        <Tab eventKey="home" title="Followers" style = {{overflowY:"scroll",height:"40vh"}}>
                         <ol style = {{color:"white"}} className = "follower-section">
                         {
                             followers.length > 0 ? (
@@ -64,7 +64,7 @@ function ProfileInformation() {
                     </ol>
                         
                         </Tab>
-                        <Tab eventKey="profile" title="Following">
+                        <Tab eventKey="profile" title="Following" style = {{overflowY:"scroll",height:"40vh"}}>
                             <ol style = {{color:"white"}}  className = "follower-section">
                             {
                                 following.length > 0 ? (

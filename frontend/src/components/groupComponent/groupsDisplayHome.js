@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import {Modal,Button} from 'react-bootstrap'
 import axios from 'axios'
 import {Link} from 'react-router-dom'
@@ -18,7 +18,7 @@ function GroupsDisplay() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    React.useEffect(async() => {
+    useEffect(async() => {
         try{
             const response =await axios.get(`http://localhost:8080/users/${userid}/groups`)
             setGroups(response.data.groups)
@@ -27,6 +27,25 @@ function GroupsDisplay() {
         }
         
     },[userid])
+
+    const handleSubmit =async () =>{
+        if(title === '' || description === ''){
+            return window.alert("Enter title and description first")
+        }
+        try{
+            const response = axios.post(`http://localhost:8080/groups/create/${userid}`,{
+            title,
+            description
+        })
+
+        console.log(response.data)
+
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+
     return (
         <div style = {{color:"white", marginBottom:"10vh"} } className  = "groups-main-container container">
             <div className="main-heading">
@@ -52,11 +71,17 @@ function GroupsDisplay() {
                     <form>
                         <div class="form-group">
                         <label for="exampleInputEmail1">Group Title:</label>
-                        <input type="text" class="form-control" placeholder="Title.."/>
+                        <input type="text" class="form-control" placeholder="Title..."
+                            value = {title}
+                            onChange = {(e)=> setTitle(e.target.value)}
+                        />
                         </div>
                         <div class="form-group">
                         <label for="exampleInputPassword1">Description</label>
-                        <textarea rows= "6" type="text" class="form-control" placeholder="Enter group description i.e what the group is about"/>
+                        <textarea rows= "6" type="text" class="form-control" placeholder="Enter group description i.e what the group is about"
+                        value = {description}
+                        onChange = {(e)=> setDescription(e.target.value)}
+                        />
                         </div>
                         <small id="emailHelp" class="form-text text-muted">Adding/Removing users will be available once the group is created</small>
                     </form>
@@ -65,7 +90,7 @@ function GroupsDisplay() {
                 <Button variant="primary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button variant="danger" onClick={handleClose}>
+                <Button variant="danger" onClick={handleSubmit}>
                     Create!
                 </Button>
                 </Modal.Footer>

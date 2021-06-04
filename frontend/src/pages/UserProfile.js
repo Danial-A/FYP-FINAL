@@ -31,7 +31,7 @@ function UserProfile() {
         }catch(err){
             console.log(err)
         }
-    })
+    },[])
     useEffect(()=>{
         const fetchPosts = async ()=>{
             setLoading(true);
@@ -41,7 +41,7 @@ function UserProfile() {
         }
         fetchPosts()
 
-    }, []);
+    },[]);
 
     //Current Posts
     const lastPostIndex = currentPage * postsPerPage;
@@ -55,14 +55,7 @@ function UserProfile() {
     return (
         <div style = {{backgroundColor: '#1c2237', height:"auto"}}>
             <NavigationBar/>
-            <div className="cover-container">
-                <div className="cover-image">
-                    <img src="/images/white.png" alt=""/>
-                </div>
-                <div className="profile-image">
-                    <img src={profileImg && profileImg !== ''? profileImg : "/images/Dp.svg"} alt="" style = {{objectFit:"cover"}}/>
-                </div>
-            </div>
+            
             <Container fluid className = "user-information-section">
                 <Row>
                     <Col  lg = {3} className = "demo">
@@ -70,7 +63,7 @@ function UserProfile() {
                     </Col>
                         
                     <Col lg = {6} className = "demo user-post-section">
-                        <UserPost totalposts = {posts}/>
+                        
                         <div className="post-heading"s style = {{textAlign:'center'}}>
                             <h2>User Posts</h2>
                         </div>
@@ -78,11 +71,11 @@ function UserProfile() {
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Pagination postsPerPage={postsPerPage} totalPosts={posts.length} paginate= {paginate}/>
                         </div>
+                        <UserPost setTotalPosts = {setPosts} posts = {posts}/>
                       
                         <GroupsDisplay/>
                     </Col>
                     <Col lg = {3} className = "demo">
-                        
                         <ProfileInformation/>
                     </Col>
                 </Row>

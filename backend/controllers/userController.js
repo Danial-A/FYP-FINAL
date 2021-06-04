@@ -4,8 +4,8 @@ const {userLoginValidation,userRegisterValidation} = require('../validation/vali
 const bcrypt = require('bcryptjs')
 const jwt  = require('jsonwebtoken');
 const mongoose = require('mongoose')
-const multer = require('multer');
-const e = require('express');
+const Group = require('../models/groupModel');
+const Rooms = require('../models/roomModel');
 
 
 module.exports.get_all = (req,res)=>{
@@ -252,7 +252,7 @@ module.exports.update_user_information = (req,res)=>{
 
 //get all followers and follwing
 module.exports.get_followers_and_following = (req,res)=>{
-    User.findById(req.params.id, "followers following").populate('followers following', "_id username firstname lastname dob emailid").exec((err, users)=>{
+    User.findById(req.params.id, "followers following").populate('followers following', "_id username firstname lastname dob emailid profileImage").exec((err, users)=>{
         if(err) return res.status(400).json({
             message:"Error getting all the users",
             err
@@ -321,9 +321,9 @@ module.exports.join_group = (req,res)=>{
     const groupid = req.body.groupid
     User.findById(req.params.id)
     .then(user=>{
-        const Group_Found = user.groups.filter(g=> g.groupid === req.body.groupid)
+        const Group_Found = user.groups.filter(g=> g.toString() === req.body.groupid)
         if(Group_Found.length === 0){
-            Groups.findOne({"_id": req.body.groupid}, (err,group)=>{
+            Groups.findById(groupid, (err,group)=>{
                 if(err) res.status(400).json({
                     error:err,
                     message:"Error finding the group"
@@ -331,20 +331,41 @@ module.exports.join_group = (req,res)=>{
                 if (Group_Found === null) res.json("No group found by id ", req.body.groupid)
 
                 else{
-                    user.groups.push({groupid:group._id})
-                    user.save().then(()=>{
-                        res.json({
-                            message:"User joined the group successfully",
-                            group:groupid
+                    group.groupMembers.push(user._id)
+                    
+                    group.save()
+                    .then(g=>{
+                        user.groups.push(group._id)
+                        user.save()
+                        .then(()=>{
+                            Rooms.findById(group.chatid, (err,room)=>{
+                                if(err) res.status(400).json({
+                                    err,
+                                    message:"Error finding room"
+                                })
+                                else{
+                                    room.participants.push(user._id)
+                                    room.save()
+                                    .then(res.json("User addred to group, group added to user list and user joined chat"))
+                                }
+                            })
+                        }).catch(err=>{
+                            res.status(400).json({
+                                message:"Unable to join the group",
+                                error:err
+                            })
                         })
                     }).catch(err=>{
                         res.status(400).json({
-                            message:"Unable to join the group",
-                            error:err
+                            err,
+                            message:"error adding group member"
                         })
                     })
+                   
                 }
             })
+        }else{
+            res.json("You are already a member of this group")
         }
     }).catch(err=>{
         res.status(404).json({
@@ -352,6 +373,65 @@ module.exports.join_group = (req,res)=>{
             message:"Unable to locate the user"
         })
     })
+}
+
+//leave group
+module.exports.leave_group = (req,res)=>{
+    const groupid = req.body.groupid
+    User.findById(req.params.id)
+    .then(user=>{
+        const Group_Found = user.groups.filter(g=> g.toString() === req.body.groupid)
+        if(Group_Found.length !== 0){
+            Groups.findById(groupid, (err,group)=>{
+                if(err) res.status(400).json({
+                    error:err,
+                    message:"Error finding the group"
+                })
+                if (Group_Found === null) res.json("No group found by id ", req.body.groupid)
+
+                else{
+                    group.groupMembers.remove(user._id)
+                    group.save()
+                    .then(g=>{
+                        user.groups.remove(group._id)
+                        user.save()
+                        .then(()=>{
+                            Rooms.findById(group.chatid, (err,room)=>{
+                                if(err) res.status(400).json({
+                                    err,
+                                    message:"Error finding room"
+                                })
+                                else{
+                                    room.participants.remove(user._id)
+                                    room.save()
+                                    .then(res.json("User removed from group, group removed from user list and user removed from chat"))
+                                }
+                            })
+                        }).catch(err=>{
+                            res.status(400).json({
+                                message:"Unable to  leave the group",
+                                error:err
+                            })
+                        })
+                    }).catch(err=>{
+                        res.status(400).json({
+                            err,
+                            message:"error removing group member"
+                        })
+                    })
+                   
+                }
+            })
+        }else{
+            res.json("You are not a member of this group")
+        }
+    }).catch(err=>{
+        res.status(404).json({
+            error:err,
+            message:"Unable to locate the user"
+        })
+    })
+
 }
 
 //Get all user groups
@@ -589,7 +669,6 @@ module.exports.user_recommendations = (req,res)=>{
                             const users_id = users.map(u=> u._id)
                             const result = users_id.filter(f=> all_user_id.includes(f))
                             res.json(result)
-
                         }
                     })
                 }

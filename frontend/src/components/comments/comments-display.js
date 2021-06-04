@@ -4,10 +4,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './comment.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
-import {DropdownButton, Dropdown} from 'react-bootstrap'
+import {Button, Modal} from 'react-bootstrap'
 import axios from 'axios'
 function DisplayComments(props) {
     const [comments,setComments] = useState([])
+    const [commentValue, setCommentValue] = useState('')
     useEffect(()=>{
         axios.get(`http://localhost:8080/posts/${props.comments}/comments`)
         .then(c=>{
@@ -16,19 +17,37 @@ function DisplayComments(props) {
         .catch(err=>{
             console.log(err)
         })
-    })
+    },[])
 
-    const deleteComment = (id) =>{
-        axios.post(`http://localhost:8080/posts/${id}/comment/delete`)
-        .then(res=>{
-            console.log(res)
-            window.alert("Comment Deleted");
-        })
-        .catch(err=> console.log(err))
-
-        
+    const deleteComment =async (id) =>{
+        const option = window.confirm("Are you sure you want to delete this comment?")
+        if(option){
+            axios.post(`http://localhost:8080/posts/${id}/comment/delete`)
+            .then(res=>{
+                console.log(res.data)
+               
+               
+            })
+            .catch(err=> console.log(err))
+        }else{
+            return null
+        }
     }
 
+    const editComment =async (id) =>{
+        try{
+            const response = await axios.post(`http://localhost:8080/posts/${id}/comment/update`,{comment:commentValue})
+            console.log(response.data)
+            setCommentValue('')
+            handleClose()
+
+        }catch(err){
+            console.log(err)
+        }
+    }
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
     return (
         <div className="display-comments hs">
             <p> <b>Comments: </b> </p>
@@ -38,25 +57,16 @@ function DisplayComments(props) {
                         <div className="row">
                             <div className="col-md-6">
                                 <div className="post-heading-section">
-                                    <p> <b>{comment.userid.username}</b></p>
+                                    <p> <b>Username: {comment.userid.username}</b></p>
                                 </div>
                             </div>
-                            <div className="col-md-4 mm">
+                            <div className="col-md-3 mm">
                                <small>Created:{moment(comment.createdAt).fromNow()}</small> 
                             </div>
-                            <div className="col-md-2 mm">
+                            <div className="col-md-3 mm">
                             <small>
-                                    <DropdownButton
-
-                                    title=""
-                                    variant="light"
-                                    id="dropdown-custom-components"
-                                >
-                                    <Dropdown.Item eventKey="1"><FontAwesomeIcon icon={faTrash} onClick = {()=> deleteComment(comment._id)}/> Delete</Dropdown.Item>
-                                    <Dropdown.Item eventKey="2"><FontAwesomeIcon icon={faEdit} />Edit</Dropdown.Item>
-
-                                </DropdownButton> 
-                               
+                            <span className = "icons-post" onClick ={()=> deleteComment(comment._id)}><FontAwesomeIcon icon={faTrash}  /> Delete</span>
+                            <span className = "icons-post" onClick = {handleShow}><FontAwesomeIcon icon={faEdit}  /> Edit</span>
                             </small>
                             </div>
 
@@ -69,6 +79,25 @@ function DisplayComments(props) {
                                 <p>{comment.body}</p>
 
                             </div>
+                            <>
+                            <Modal show={show} onHide={handleClose}>
+                              <Modal.Header closeButton>
+                                <Modal.Title>{comment.userid.username.toUpperCase()}</Modal.Title>
+                              </Modal.Header>
+                              <Modal.Body>
+                              <label>Comment:</label>
+                              <input type="text" className = "form-control comment-input" name = "body" id = "body"
+                              value = {commentValue}
+                              onChange = {(e)=> setCommentValue(e.target.value)}
+                              />
+                              </Modal.Body>
+                              <Modal.Footer>
+                                <Button variant="danger" onClick={()=>editComment(comment._id)}>
+                                  Save Changes
+                                </Button>
+                              </Modal.Footer>
+                            </Modal>
+                          </>
                         </div>
                         {/* <div className="comment-side">
                                 <pre><strong>{comment.username}:</strong> </pre>
@@ -82,7 +111,7 @@ function DisplayComments(props) {
                     </div>
                 ))) : <div>No Comments yet..</div>
             }
-
+       
         </div>
     )
 }

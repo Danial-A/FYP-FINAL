@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useRef} from 'react'
 import axios from 'axios'
 import NavigationBar from '../navigation-bar/userNavbar'
 import Footer from '../footer-section/footer'
@@ -9,30 +9,96 @@ import Post from '../post-component/post'
 import './groupsDisplayHome.css'
 import MemberCard from './memberCard'
 import Message from '../NewMessenger/message/Message'
+import AddUserCard from './AddUserCard'
 import './membercard.css'
+import {io} from 'socket.io-client'
+
 function GroupPage({match}) {
+    const userid = localStorage.getItem('userid')
     const gid = match.params.id
     const [group, setGroup] = useState({})
+    const [user,setUser] = useState({})
+    const[userSearch, setUserSearch] = useState('')
+    const [users, setUsers] = useState([])
+    const [filteredUsers, setFilteredUsers] = useState([])
     const [groupMembers,setGroupMembers] = useState([])
     const [groupAdmins,setGroupAdmins] = useState([])
     const [TotalPosts, setTotalPosts] = useState([]);
     const [posts,setPosts] = useState([])
+    const [chatid, setChatid] = useState('')
+    const [chat, setChat] = useState({})
+    const socket = useRef()
+    const [arrivalMessage,setArrivalMessage ] = useState(null)
+    const [messages,setMessages ] = useState([])
+    const [newMessage, setNewMessage] = useState('')
+    
+
     useEffect(()=>{
         axios.get(`http://localhost:8080/groups/${gid}/`)
         .then(response=>{
-            console.log(response.data)
             setGroup(response.data)
             setPosts(response.data.posts)
             setGroupAdmins(response.data.admins)
             setGroupMembers(response.data.groupMembers)
+            setChatid(response.data.chatid)
 
         }).catch(err=>{
             console.log(err)
         })
+
+      
+    })
+
+    useEffect(()=>{
+        axios.get(`http://localhost:8080/users/${userid}/`)
+        .then(res=>{
+            const usersAll = [...res.data.following,...res.data.followers]
+            const unique =  Array.from(new Set(usersAll.map(a=> a._id))).map(id => {
+                return usersAll.find(a=> a._id === id)
+            })
+            setUsers(unique)
+            setUser(res.data)
+        }).catch(err=>{
+            console.log(err)
+        })
+
+        socket.current = io("ws://localhost:8080")
+        socket.current.emit('createRoom', chatid)
+        socket.current.on('getGroupMessage', data=>{
+            setArrivalMessage({
+                sender: data.senderId,
+                text:data.text,
+                createdAt: Date.now()
+            })
+        })
     },[])
+
+    useEffect(async()=>{
+        try{
+         const res =await  axios.get(`http://localhost:8080/rooms/${chatid}/`)
+         setMessages(res.data.messages)
+         setChat(res.data)
+        }catch(err){
+            console.log(err)
+        }
+     })
+    
+
+    useEffect(() => {
+        arrivalMessage && chat?.participants.includes(arrivalMessage.sender) &&
+        setMessages(prev => [...prev, arrivalMessage])
+    }, [arrivalMessage,chat])
+
+    useEffect(()=>{
+        if(users.length !== 0){
+            const result = users.filter(u=> (u.username.includes(userSearch) || u.firstname.includes(userSearch)) && userSearch !== '' )
+            setFilteredUsers(result)
+        }
+    },[userSearch])
+    
+   
+
     //form validation
-
-
     const initialValues = {
         title: '',
         body: '',
@@ -50,6 +116,8 @@ function GroupPage({match}) {
         }
     }
 
+
+
     const validationSchema = Yup.object({
         title: Yup.string().required('This field is required..'),
         body: Yup.string().required('This field is required..')
@@ -62,6 +130,36 @@ function GroupPage({match}) {
     })
     const handleReload = ()=>{
         window.location.reload(false)
+    }
+
+    const handleSubmit =async (e) =>{
+        e.preventDefault()
+        const message = {
+            sender: userid,
+            text:newMessage,
+            chatid
+        }
+        socket.current.emit('groupMessage', {
+            senderId: userid,
+            room: chatid,
+            text:newMessage
+        })
+        try{
+            const res = await axios.post(`http://localhost:8080/rooms/${chatid}/message/new`,message)
+            setMessages([...messages],res.data.message)
+            setNewMessage('')
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    const checkAdmin = () =>{
+        const found = groupAdmins.filter(g=> g.toString() === userid)
+        if(found.length > 0){
+            return true
+        }else{
+            return false
+        } 
     }
     return (
         <div className = "container-fluid bottom-margin">
@@ -115,39 +213,42 @@ function GroupPage({match}) {
                     </div>
                 </div>
                 <div className="col-md-3">
-                    <div className="container members-section ">
-                        <h5>Group Members</h5>
-                        {/*<ul>
+                <h5 style = {{color:"white"}}>Group Members</h5>
+                    <div className="container members-section " style = {{overflowY:"scroll"}}>
+                        
+                        
                             {
                                 groupMembers.map(
                                     u=>(
-                                        groupMembers.length > 0 ? <li>{u.username}</li> : <li>No users</li>
+                                        groupMembers.length > 0 ? <MemberCard user = {u} groupid = {gid}/> : <li>No users</li>
                                     )
                                 )
+                            } 
+                        {
+                            checkAdmin ? <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Search user.."
+                                value = {userSearch}
+                                onChange = {e=> setUserSearch(e.target.value)}
+                            />
+                          </div> : null
+                        }
+                          <div className="users-search">
+                            {
+                                filteredUsers.map(u => (
+                                    filteredUsers.length > 0 ? <AddUserCard user  = {u} groupid = {gid}/> : <div>No users found</div>
+                                ))
                             }
-                        </ul>*/}
-                        <MemberCard user = {"Awais Abbasi"}/>
-                        <MemberCard user = {"Test User"}/>
-                        <MemberCard user = {"Zain Ali"}/>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Search user.."/>
-                            <div class="input-group-append">
-                              <button className = "btn btn-danger">Search</button>
-                            </div>
                           </div>
                     </div>
                     <div className="container admins mt-3">
                         <h5>Group Admins</h5>
-                        
-                            {/*
-                                groupAdmins.map(a=>(
-                                    <li>{a.username}</li>
-                                ))
-                                */
-                            }
-                            <MemberCard user = {"Danial Ahmad"}/>
-                            <MemberCard user = {"Sheharyar Ahmad"}/>
-                            <MemberCard user = {"Ashhad Ahsan"}/>
+                        {
+                            groupAdmins.map(
+                                u=>(
+                                    groupAdmins.length > 0 ? <MemberCard user = {u}/> : <div>No users</div>
+                                )
+                            )
+                        }
                             
                     </div>
                    <div className="groupChatWrapper">
@@ -155,21 +256,23 @@ function GroupPage({match}) {
                    <div className="container group-chat mt-3">
                 
                       <div className="messages">
-                      <Message message = {{text:"demo message from danial"}} own = {true}/>
-                      <Message message = {{text:"A message"}}/>
-                      <Message message = {{text:"demo another"}}/>
-                      <Message message = {{text:"demo from haider"}}/>
-                      <Message message = {{text:"demo "}}/>
-                      <Message message = {{text:"spam"}} own = {true}/>
-                      <Message message = {{text:"demo from haider"}}/>
+                      {
+                          messages?.map(
+                              m=>(
+                                  messages.length > 0 ? <Message message = {m} own = {m.sender.toString() === userid}/> : <div>No messages in chat</div>
+                              )
+                          )
+                      }
                       </div>
                      
                </div>
                <div className="sendMessage">
                <div class="input-group mt-3 mb-1">
-               <input type="text" class="form-control" placeholder="New Message.."/>
+               <input type="text" class="form-control" placeholder="New Message.."
+               value = {newMessage}
+               onChange=  {e=> setNewMessage(e.target.value)}/>
                <div class="input-group-append">
-                 <button className = "btn btn-danger">Send</button>
+                 <button className = "btn btn-danger" onClick = {(e)=> handleSubmit(e)}>Send</button>
                </div>
                 </div>
                </div>

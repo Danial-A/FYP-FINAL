@@ -24,7 +24,7 @@ function Conversation({conversation, current}) {
         <div className = "conversation">
         <img
           className="conversationImg"
-          src= {img === 'http://localhost:8080/' ? "/images/Dp.svg" : img}
+          src= {img === 'http://localhost:8080//images/Dp.svg' ? "/images/Dp.svg" : img}
         />
         <span className="conversationName">{user?.firstname} {user?.lastname}</span>
         </div>

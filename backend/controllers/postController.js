@@ -12,20 +12,19 @@ module.exports.get_all = (req,res)=>{
 }
 
 //Delete all posts
-module.exports.nuke = (req,res)=>{
+module.exports.nuke =  (req,res)=>{
     Post.deleteMany({})
     .then(res.json("Nuke Deployed"))
     .catch(err=>res.status(400).json("Error deploying the nuke...", err))
 }
 
 //Add new post
-module.exports.add_post =async (req,res)=>{
+module.exports.add_post = async (req,res)=>{
     //Req data validation
-    const {error} =await postValidationSchema(req.body)
+    const {error} = await postValidationSchema(req.body)
     if(error){
         res.status(400).send(error.details[0].message)
     }
-
     const newPost = new Post({
         title: req.body.title,
         body:req.body.body,
@@ -39,7 +38,10 @@ module.exports.add_post =async (req,res)=>{
             message:'New Post Added'
         })
     })
-    .catch(err=> res.status(400).json("Error creating post ",err))
+    .catch(err=> res.status(201).json({
+        err,
+        message:"Error creating post"
+    }))
 }
 
 //get post by id
@@ -138,18 +140,20 @@ module.exports.delete_comment = (req,res)=>{
 }
 
 //Update comment
-module.exports.update_comment = (req,res, next)=>{
+module.exports.update_comment = (req,res)=>{
     
-    Post.findById(req.params.id)
-    .then(post=>{
-        
-        var comment = post.comments.id(req.body.id)
-        comment.set(req.body)
-        return post.save()
-       
+    comments.findByIdAndUpdate(req.params.id, {"body": req.body.comment},(err,result)=>{
+        if(err) res.status(400).json({
+            message:"Error updating comment",
+            err
+        })
+        else{
+            res.json({
+                message:"Comment Updated",
+                result
+            })
+        }
     })
-    .then(post=> res.send(post))
-    .catch(err=> res.status(404).json("Error finding the post ",err))
 }
 
 //comments nuke
