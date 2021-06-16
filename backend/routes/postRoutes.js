@@ -18,7 +18,6 @@ router.post('/update/:id', postController.update_post)
 //Post Like and Unlike
 router.post("/:id/like", postController.like_unlike)
 
-
 //Get post by ID
 router.get('/:id', postController.get_post_by_id)
 //Find user posts

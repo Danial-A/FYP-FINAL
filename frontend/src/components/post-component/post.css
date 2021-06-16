@@ -108,6 +108,10 @@
     object-fit: cover;
 }
 
+.post-image:hover{
+    cursor: pointer;
+}
+
 .icons-row{
     display: flex;
     justify-content: flex-end;

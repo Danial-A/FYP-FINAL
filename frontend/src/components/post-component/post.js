@@ -6,11 +6,12 @@ import Tippy from '@tippy.js/react'
 import { faThumbsUp, faComment, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import { Modal, Button, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './post.css'
 import 'tippy.js/dist/tippy.css'
 import {toast} from 'react-toastify'
+import {SRLWrapper} from 'simple-react-lightbox'
 
 
 function Post({ posts, loading }) {
@@ -45,6 +46,8 @@ function Post({ posts, loading }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true)
+  const [title,setTitle] = useState('')
+  const [body,setBody] = useState('')
 
 
   const checkLike =async (postid) => {
@@ -73,8 +76,15 @@ function Post({ posts, loading }) {
 
   }
 
-  const editPost = ()=>{
- 
+  const editPost =async (id)=>{
+      try{
+        const response = await axios.post(`http://localhost:8080/posts/update/${id}`, {
+          title,body
+        })
+        console.log(response.data)
+      }catch(err){
+        console.log(err)
+      }
   }
 
   if (loading) {
@@ -96,7 +106,7 @@ function Post({ posts, loading }) {
                 {post.author._id?.toString() === localStorage.getItem('userid') ?
                   <div className = "icons-row"> 
                       <span className = "icons-post" onClick = {()=> DeletePost(post._id)}><FontAwesomeIcon icon={faTrash}  /> Delete</span>
-                    <span className = "icons-post" onClick = {()=> editPost()}><FontAwesomeIcon icon={faEdit}  /> Edit</span>
+                    <span className = "icons-post" onClick = {handleShow}><FontAwesomeIcon icon={faEdit}  /> Edit</span>
                   </div>
                   :
                  <div></div>
@@ -119,9 +129,14 @@ function Post({ posts, loading }) {
                 <div className="col">
                   <div className="post-body">
                     <p>{post.body}</p>
-                    {/*<div className="post-image">
+                    <SRLWrapper>
+                    <div className="post-image">
                     <img src="/images/background.jpg" alt="" />
-                </div>*/}
+                    </div>
+                    <div className="post-image">
+                    <img src="/images/background.jpg" alt="" />
+                    </div>
+                    </SRLWrapper>
                   </div>
                 </div>
               </div>
@@ -132,40 +147,47 @@ function Post({ posts, loading }) {
                 </div>
 
               </div>
+              <>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+          <Modal.Title>Edit Post</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Title</label>
+              <input type="text" class="form-control" placeholder= "title"
+                value = {title}
+                onChange = {e=> setTitle(e.target.value)}
+              />
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Body</label>
+              <textarea class="form-control" id="postbody" placeholder="Body"
+              value = {body}
+              onChange = {e=> setBody(e.target.value)}
+              />
+            </div>
+            <Button type="submit" variant="danger" onClick = {()=> editPost(post._id)}>
+              Save Changes
+            </Button>
+            </form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="warning" onClick={handleClose}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          
+      </>
+
 
             </div>
           ))
           ) : <div className="container post-container" style={{ color: "crimson" }}>NO POSTS TO SHOW</div>
       }
-      <>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-        <Modal.Title>Edit Post</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-          <div class="form-group">
-            <label for="exampleInputEmail1">Title</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter title" />
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">Body</label>
-            <textarea class="form-control" id="postbody" placeholder="Body" />
-          </div>
-          <Button type="submit" variant="danger" >
-            Save Changes
-          </Button>
-          </form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="warning" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        
-      </>
-
+      
 
 
     </div>

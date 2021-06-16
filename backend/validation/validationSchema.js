@@ -12,7 +12,7 @@ module.exports.userLoginValidation = (data)=>{
  module.exports.postValidationSchema = (data) =>{
      const schema = Joi.object({
          title: Joi.string().required().min(6),
-         body:Joi.string().required().min(10),
+         body:Joi.string().required().min(6),
          author: Joi.string().required(),
          postType:Joi.string().required()
 

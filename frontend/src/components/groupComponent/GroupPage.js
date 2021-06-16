@@ -128,9 +128,6 @@ function GroupPage({match}) {
         onSubmit,
         validationSchema
     })
-    const handleReload = ()=>{
-        window.location.reload(false)
-    }
 
     const handleSubmit =async (e) =>{
         e.preventDefault()

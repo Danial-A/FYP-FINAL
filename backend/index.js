@@ -33,6 +33,7 @@ const groupRoutes = require('./routes/groupsRoutes')
 const roomRoutes = require('./routes/roomRoutes')
 const messageRoutes = require('./routes/messageRoutes')
 const privateRoutes = require('./routes/privateChatRoutes');
+const adminRoutes = require('./routes/adminRoutes')
 
 //API Middleware
 app.use('/users', userRoutes)
@@ -41,6 +42,7 @@ app.use('/groups',groupRoutes)
 app.use('/rooms',roomRoutes)
 app.use('/chats',privateRoutes)
 app.use('/messages',messageRoutes)
+app.use('/admin',adminRoutes)
 app.use('/uploads', express.static('uploads'))
 
 
@@ -65,7 +67,7 @@ const addUser = (userId, socketId) => {
   };
 
 mongoose.connect(process.env.DB_URI, {useNewUrlParser:true, useCreateIndex:true, useUnifiedTopology:true})
-.then(res=>{
+.then(()=>{
    io.on('connection', (socket)=>{
        console.log(socket.rooms);
         socket.emit("me", socket.id)

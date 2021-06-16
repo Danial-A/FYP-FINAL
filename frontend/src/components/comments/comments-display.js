@@ -17,7 +17,7 @@ function DisplayComments(props) {
         .catch(err=>{
             console.log(err)
         })
-    },[])
+    })
 
     const deleteComment =async (id) =>{
         const option = window.confirm("Are you sure you want to delete this comment?")

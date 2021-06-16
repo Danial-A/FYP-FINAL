@@ -65,4 +65,7 @@ router.post('/:user/image/upload', upload.single('file'), userController.image_u
 //get user recommendations
 router.get('/:id/recommendations', userController.user_recommendations)
 
+//get profile image
+router.get('/:id/profile/image', userController.get_profileimage)
+
 module.exports = router

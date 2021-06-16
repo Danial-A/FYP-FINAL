@@ -676,3 +676,16 @@ module.exports.user_recommendations = (req,res)=>{
         }
     })
 }
+
+//get user profile image
+module.exports.get_profileimage = (req,res)=>{
+    User.findById(req.params.id,"profileImage",(err,user)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"Error finding user"
+        })
+        else{
+            res.json(user.profileImage)
+        }
+    })
+}
