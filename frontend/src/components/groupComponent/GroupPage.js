@@ -11,6 +11,7 @@ import MemberCard from './memberCard'
 import Message from '../NewMessenger/message/Message'
 import AddUserCard from './AddUserCard'
 import './membercard.css'
+import {Link} from 'react-router-dom'
 import {io} from 'socket.io-client'
 
 function GroupPage({match}) {
@@ -202,6 +203,7 @@ function GroupPage({match}) {
                          </div>
                          </form>
                     </div>
+                   <Link to = {`/room/${gid}`}><button className = "btn btn-danger">Join Room?</button></Link> 
                 </div>
                 <div className="col-md-6">
                     <div className="container group-posts">

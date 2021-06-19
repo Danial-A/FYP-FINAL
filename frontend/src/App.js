@@ -8,11 +8,11 @@ import UserProfile from './pages/UserProfile';
 import UserHomePage from './pages/UserHomePage';
 import GroupPage from './components/groupComponent/GroupPage'
 import PostPage from './pages/postPage'
-import Messenger from './pages/messenger'
 import EditorPage from './pages/editorPage';
 import WhiteBoard from './pages/WhiteBoard'
 import Youtube from './components/youtube/Youtube'
 import NewMessenger from './components/NewMessenger/Messenger';
+import JitsiComponent from './components/video-chat-room/JitsiComponent';
 
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
       <Route exact path = "/playground/:id" component = {EditorPage}/>
       <Route exact path = "/whiteboard" component = {WhiteBoard}/>
       <Route exact path = "/youtube" component = {Youtube}/>
-     {/* <Route exact path = "/new/messenger" component = {NewMessenger}/> */}
+      <Route exact path = "/room/:id" component = {JitsiComponent}/>
 
     </Switch>
   );
