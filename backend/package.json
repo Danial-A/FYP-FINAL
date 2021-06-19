@@ -11,15 +11,16 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cloudmersive-ocr-api-client": "^1.3.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
     "joi": "^17.4.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.15",
     "multer": "^1.4.2",
-    "socket.io": "^3.1.1",
-    "cloudmersive-ocr-api-client": "^1.3.3"
+    "socket.io": "^3.1.1"
   }
 }

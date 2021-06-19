@@ -8,8 +8,9 @@ function Message({message,own}) {
   useEffect(async()=>{
       try{
         const response = await axios.get(`http://localhost:8080/users/${message.sender}/profile/image`)
-        if(response.data.profileImage !== ''){
-          setImg(`http://localhost:8080/${response.data}`)
+        if(response.data !== '' || response.data !== null){
+          setImg(`http://localhost:8080/uploads/users/${message.sender}/${response.data}`)
+          console.log(response.data)
         }
       }catch(err){
         console.log(err)

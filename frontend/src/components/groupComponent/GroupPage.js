@@ -47,7 +47,7 @@ function GroupPage({match}) {
         })
 
       
-    })
+    },[])
 
     useEffect(()=>{
         axios.get(`http://localhost:8080/users/${userid}/`)
@@ -81,7 +81,7 @@ function GroupPage({match}) {
         }catch(err){
             console.log(err)
         }
-     })
+     },[])
     
 
     useEffect(() => {

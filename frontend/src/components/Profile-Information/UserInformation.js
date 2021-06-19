@@ -47,10 +47,11 @@ function UserInformation() {
             const UserInformation = await axios.get(`http://localhost:8080/users/${user}`)
             setUser(UserInformation.data)
             setInterests(UserInformation.data.interests)
-            setProfileImg(`http://localhost:8080/${UserInformation.data.profileImage}`)
+            setProfileImg(`http://localhost:8080/uploads/users/${user}/${UserInformation.data.profileImage}`)
+            console.log(UserInformation)
         }
         getUserInfo()
-    })
+    },[])
 
     //Edit user information
     const initialValues = {
@@ -127,7 +128,7 @@ function UserInformation() {
                 </ul> */}
 
                 <Card style={{ width: '18rem' }}>
-                <Card.Img variant="top" src={profileImg && profileImg !== ''? profileImg : "/images/Dp.svg"} />
+                <Card.Img variant="top" src={profileImg && profileImg !== '' || profileImg === undefined || profileImg === null? profileImg : "/images/Dp.svg"} />
                     <ListGroup variant="flush">
                         <ListGroup.Item><FontAwesomeIcon icon={faUser} className="icon" />Name: <pre> {User.firstname} {User.lastname}</pre></ListGroup.Item>
                         <ListGroup.Item><FontAwesomeIcon icon={faUsers} className="icon" />Username:<pre> {User.username}</pre></ListGroup.Item>

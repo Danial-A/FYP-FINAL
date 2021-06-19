@@ -18,7 +18,8 @@ function AddUserCard({user,groupid}) {
     const addUser = async (id)=>{
         try{
             const response = await axios.post(`http://localhost:8080/groups/${groupid}/members/add`, {userid:id})
-            add("New user added!")
+            if(response.data === '')
+            console.log(response)
         }catch(err){
             console.log(err)
         }

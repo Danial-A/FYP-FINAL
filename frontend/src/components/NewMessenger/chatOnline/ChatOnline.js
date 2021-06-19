@@ -155,7 +155,9 @@ function ChatOnline({current, onlineUsers , setCurrentChat}) {
               <div className="chatOnlineBadge"></div>
             </div>
             <span className="chatOnlineName">{user.firstname} {user.lastname}</span>
+            
           </div>
+          <button className = "btn btn-danger">Call</button>
           </div>
           )
         )}

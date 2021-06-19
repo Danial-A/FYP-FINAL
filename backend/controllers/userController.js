@@ -6,6 +6,7 @@ const jwt  = require('jsonwebtoken');
 const mongoose = require('mongoose')
 const Group = require('../models/groupModel');
 const Rooms = require('../models/roomModel');
+const fs = require('fs-extra')
 
 
 module.exports.get_all = (req,res)=>{
@@ -624,12 +625,23 @@ module.exports.image_upload = (req,res)=>{
         })
         else{
             if(req.file){
-                user.profileImage = req.file.path
+                user.profileImage = req.file.filename
                 user.save()
-                .then(res.json({
-                    message:"Image uploaded",
-                    image:req.file
-                }))
+                .then(()=>{
+                    var filename = req.file.filename;
+                    fs.move(`uploads/${filename}`, `uploads/users/${user._id}/${filename}`, (err)=>{
+                        if(err){
+                            return console.log(err)
+                        }
+                        else{
+                            res.json({
+                                message:"Image uploaded to user folder",
+                                image:req.file.filename,
+                            })
+                        }
+                    })
+                    // res.json(filename)
+                })
                 .catch(err => res.status(204).json({
                     message:"Error uploading the image",
                     err
@@ -686,6 +698,19 @@ module.exports.get_profileimage = (req,res)=>{
         })
         else{
             res.json(user.profileImage)
+        }
+    })
+}
+
+//get new users for admin
+module.exports.get_new_registered = (req,res)=>{
+    User.find({} ,"firstname lastname username emailid profileImage").sort({createdAt:-1}).limit(5).exec((err,users)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"Error getting users"
+        })
+        else{
+            res.json(users)
         }
     })
 }

@@ -11,7 +11,7 @@ function Conversation({conversation, current}) {
         const response = await axios.get(`http://localhost:8080/users/${friendid}`)
         setUser(response.data)
         if(response.data.profileImage !== ''){
-          setImg(`http://localhost:8080/${response.data.profileImage}`)
+          setImg(`http://localhost:8080/uploads/users/${user._id}/${response.data.profileImage}`)
         }
         
       }catch(err){

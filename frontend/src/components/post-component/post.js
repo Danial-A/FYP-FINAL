@@ -14,7 +14,25 @@ import {toast} from 'react-toastify'
 import {SRLWrapper} from 'simple-react-lightbox'
 
 
+
 function Post({ posts, loading }) {
+  const images = [
+    {
+      source:"/images/background.jpg"
+    },
+    {
+      source:"/images/background.jpg"
+    },
+    {
+      source:"/images/background.jpg"
+    }
+  ]
+  const [open, setOpen] = useState(false)
+
+  const toggleModal = () => setOpen(!open)
+
+
+
   toast.configure()
   const liked = (response)=>{
 
@@ -129,14 +147,14 @@ function Post({ posts, loading }) {
                 <div className="col">
                   <div className="post-body">
                     <p>{post.body}</p>
-                    <SRLWrapper>
+              {/*<SRLWrapper>
                     <div className="post-image">
                     <img src="/images/background.jpg" alt="" />
                     </div>
                     <div className="post-image">
                     <img src="/images/background.jpg" alt="" />
                     </div>
-                    </SRLWrapper>
+              </SRLWrapper>*/} 
                   </div>
                 </div>
               </div>

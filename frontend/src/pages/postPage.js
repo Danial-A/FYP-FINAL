@@ -3,11 +3,11 @@ import NavigationBar from '../components/navigation-bar/userNavbar'
 import { Link } from 'react-router-dom'
 import moment from 'moment'
 import Tippy from '@tippy.js/react'
-import { faThumbsUp, faComment, faShare, faSave, faTrash, faEdit, faArchive } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faComment, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import PostComment from '../components/comments/comment'
 import DisplayComments from '../components/comments/comments-display'
-import { Button,DropdownButton,Dropdown } from 'react-bootstrap'
+import {DropdownButton,Dropdown } from 'react-bootstrap'
 import {toast } from 'react-toastify'
 import axios from 'axios'
 
@@ -19,7 +19,6 @@ function PostPage(props) {
 
   toast.configure()
   const liked = (response)=>{
-
     if(response === 'Post Unliked'){
       toast.error(response, {
         position:"top-center",

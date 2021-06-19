@@ -241,3 +241,18 @@ module.exports.get_following_users_posts = (req,res)=>{
     })
 }
 
+//get latest posts
+module.exports.latest_posts = (req,res)=>{
+    Post.find({}, "createdAt author likes comments").sort({createdAt: -1}).limit(5).populate({
+        path:'author',
+        select:"firstname lastname"
+    }).exec((err,posts)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"Error getting posts"
+        })
+        else{
+            res.json(posts)
+        }
+    })
+}

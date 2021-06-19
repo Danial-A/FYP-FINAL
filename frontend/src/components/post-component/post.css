@@ -116,3 +116,7 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.postimages{
+    padding: 10px 50px;
+}

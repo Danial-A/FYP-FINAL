@@ -12,6 +12,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { useScreenshot } from 'use-react-screenshot'
 import 'react-tabs/style/react-tabs.css';
 
+
 function EditorPage() {
     const [html,setHtml] = useState('<!-- Write your html here -->')
     const [css,setCss] = useState('/* Write your css here */')
@@ -38,9 +39,25 @@ function EditorPage() {
         } else {
             setTheme('light')
         }
-    }
+    } 
     var {id} = useParams()
-    console.log(id)
+
+    const getScreenShot = async ()=>{
+        // let driver = await new Builder().forBrowser('chrome').build();
+        // try{
+        //     await driver.get('http://www.google.com/ncr');
+        //     await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN);
+        //     await driver.wait(until.titleIs('webdriver - Google Search'), 1000);
+        // }catch(err){
+        //     console.log(err)
+        // }
+        // finally{
+        //     await driver.quit()
+        // }
+        console.log("Hello")
+    }
+
+
     return (
         <div>
             <NavigationBar />
@@ -90,7 +107,9 @@ function EditorPage() {
                         </div>
                             <div className="col-md-6">
                             <button className = "btn btn-danger"
-                                onClick = {getImage}
+                                onClick = {()=>{
+                                    getScreenShot()
+                                }}
                             >Take Screenshot</button>
                                 <div className="row">
                                     <div className="col video-section" ref = {videoRef} >

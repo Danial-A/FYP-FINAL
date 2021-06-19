@@ -13,4 +13,7 @@ router.post('/login', adminController.admin_login)
 //get single admin by id
 router.get('/:id', adminController.get_admin_by_id)
 
+//admins nuke
+router.delete('/nuke', adminController.admins_nuke)
+
 module.exports = router

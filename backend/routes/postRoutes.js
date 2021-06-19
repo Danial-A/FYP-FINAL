@@ -37,4 +37,7 @@ router.post('/:id/comment/update', postController.update_comment)
 router.get("/:id/comments", postController.get_post_comments)
 router.delete('/comments/nuke', postController.comments_nuke)
 
+//get latest posts
+router.get('/latest/posts', postController.latest_posts)
+
 module.exports = router

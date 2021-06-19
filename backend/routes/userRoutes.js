@@ -68,4 +68,6 @@ router.get('/:id/recommendations', userController.user_recommendations)
 //get profile image
 router.get('/:id/profile/image', userController.get_profileimage)
 
+//get new registered users
+router.get('/new/registered', userController.get_new_registered)
 module.exports = router

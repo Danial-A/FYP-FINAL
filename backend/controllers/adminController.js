@@ -27,7 +27,7 @@ module.exports.add_admin = async (req,res)=>{
 
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
-    const email = req.body.emailid;
+    const email = req.body.email;
     const username = req.body.username;
    const newUser = new admin({
        firstname,
@@ -37,22 +37,22 @@ module.exports.add_admin = async (req,res)=>{
        password: hashedPassword,
    }); 
    newUser.save()
-   .then(()=> res.redirect(`http://localhost:3000/admin/${newUser._id}`))
+   .then(()=> res.json("Registration successful"))
    .catch((err)=>{res.status(400).json({error: err, message:"Server failed to respond" })})
 }
 
 //admin login
 module.exports.admin_login =async (req,res) =>{
     try{
-        const user = await admin.findOne({username:req.body.username})
+        const user = await admin.findOne({email:req.body.email})
     if(!user){
-        return res.status(401).send("Incorrect Username Entered...")
+        return res.status(401).send("Incorrect email Entered...")
     }
     const validPassword = await bcrypt.compare(req.body.password, user.password);
     if(!validPassword) return res.status(401).send('Invalid Password...');
 
     const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
-    res.header('auth-token', token).send({token, userid: user._id,username : user.username ,message:"Sign in successful!"})
+    res.header('auth-token', token).send({token, userid: user._id,username : user.username ,message:"Sign in successful!", email:user.email})
     }
     catch(err){
         res.json(err)
@@ -69,6 +69,19 @@ module.exports.get_admin_by_id = (req,res)=>{
         }
         else{
             res.json(user)
+        }
+    })
+}
+
+//delete all admins
+module.exports.admins_nuke = (req,res)=>{
+    admin.deleteMany({}, (err,response)=>{
+        if(err) res.status(400).json({
+            err,
+            message:"Error deleting admins"
+        })
+        else{
+            res.json('Admins nuke deployed')
         }
     })
 }
