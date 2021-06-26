@@ -36,7 +36,7 @@ function NavigationBar() {
               <Nav.Link href="/messenger">Messenger</Nav.Link>
               <Nav.Link href="/playground">Playground</Nav.Link>
               <Nav.Link href="/youtube">Youtube</Nav.Link>
-              <Nav.Link href="/sign-in" className = "navbar-signup" onClick = {handleLogout}>Log Out</Nav.Link>
+              <Nav.Link href="/signin" className = "navbar-signup" onClick = {handleLogout}>Log Out</Nav.Link>
             </Nav>
           </Navbar.Collapse>
           </Navbar>

@@ -50,8 +50,10 @@ function PostPage(props) {
         setComments(res.data.comments)
         setlikes(res.data.likes)
       }).catch(err => console.log("error fetching the post ", err))
-  },[])
+  },[props.match.params.id])
 
+  const created = new Date(post.createdAt)
+  console.log(created.getMonth())
 
     const handleLike = async () =>{
       try{

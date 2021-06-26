@@ -70,4 +70,7 @@ router.get('/:id/profile/image', userController.get_profileimage)
 
 //get new registered users
 router.get('/new/registered', userController.get_new_registered)
+
+//get all users for admin
+router.get('/admin/all', userController.get_all_admin_users)
 module.exports = router

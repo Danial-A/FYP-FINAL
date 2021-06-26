@@ -17,7 +17,7 @@ function NavigationBar() {
               <Nav.Link href="/">Home</Nav.Link>
               <Nav.Link href="#about">About Us</Nav.Link>
               <Nav.Link href="#contact">Contact Us</Nav.Link>
-              <Nav.Link href="/sign-in" className = "navbar-signup">Sign In</Nav.Link>
+              <Nav.Link href="/signin" className = "navbar-signup">Sign In</Nav.Link>
             </Nav>
           </Navbar.Collapse>
           </Navbar>

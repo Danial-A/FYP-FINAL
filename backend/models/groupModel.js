@@ -35,7 +35,14 @@ const groupModel = new schema({
     chatid:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'rooms'
-    }
+    },
+    channels:[
+        {
+            type:String,
+            trim:true
+        }
+    ]
+    
 },{
     timestamps :true,
     autoIndex:false

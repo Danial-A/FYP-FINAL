@@ -9,7 +9,6 @@ import Editor from "@monaco-editor/react";
 import OutputSection from '../components/editor-components/outputsection'
 import VideoSection from '../components/editor-components/videosection'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { useScreenshot } from 'use-react-screenshot'
 import 'react-tabs/style/react-tabs.css';
 
 
@@ -18,9 +17,8 @@ function EditorPage() {
     const [css,setCss] = useState('/* Write your css here */')
     const [js,setJS] = useState('//Write your javascript here')
     const [tabIndex, setTabIndex] = useState(0);
-    const [theme, setTheme] = useState('vs-dark')
     const videoRef = useRef(null)
-    const [image,takeScreenShot] = useScreenshot()
+
 
 
     const [show, setShow] = useState(false);
@@ -28,33 +26,10 @@ function EditorPage() {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const getImage =async () => {
-        await takeScreenShot(videoRef.current)
-        handleShow()
-    }
-
-    const toggleTheme = () => {
-        if (theme === 'light') {
-            setTheme('vs-dark')
-        } else {
-            setTheme('light')
-        }
-    } 
     var {id} = useParams()
 
     const getScreenShot = async ()=>{
-        // let driver = await new Builder().forBrowser('chrome').build();
-        // try{
-        //     await driver.get('http://www.google.com/ncr');
-        //     await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN);
-        //     await driver.wait(until.titleIs('webdriver - Google Search'), 1000);
-        // }catch(err){
-        //     console.log(err)
-        // }
-        // finally{
-        //     await driver.quit()
-        // }
-        console.log("Hello")
+       console.log("Hello jee")
     }
 
 
@@ -75,7 +50,7 @@ function EditorPage() {
                     
                         <TabPanel>
                         <Editor
-                        height="80.6vh"
+                        height="84vh"
                         defaultLanguage="html"
                         defaultValue={html}
                         onChange={value=> {
@@ -85,7 +60,7 @@ function EditorPage() {
                         </TabPanel>
                         <TabPanel>
                         <Editor
-                        height="80.6vh"
+                        height="84vh"
                         defaultLanguage="css"
                         defaultValue={css}
                         onChange={value=> {
@@ -95,7 +70,7 @@ function EditorPage() {
                         </TabPanel>
                         <TabPanel>
                         <Editor
-                        height="80.6vh"
+                        height="84vh"
                         defaultLanguage="javascript"
                         defaultValue={js}
                         onChange={value=> {
@@ -140,7 +115,7 @@ function EditorPage() {
                 <Modal.Title>Modal heading</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                        <img src={image} alt="screenshot" width = "800"  height = "600px"/>
+              oops
               </Modal.Body>
              
             </Modal>

@@ -13,10 +13,11 @@ import AddUserCard from './AddUserCard'
 import './membercard.css'
 import {Link} from 'react-router-dom'
 import {io} from 'socket.io-client'
+import GroupChannels from '../group-channels/groupChannels'
 
 function GroupPage({match}) {
     const userid = localStorage.getItem('userid')
-    const gid = match.params.id
+    const gid = match?.params.id
     const [group, setGroup] = useState({})
     const [user,setUser] = useState({})
     const[userSearch, setUserSearch] = useState('')
@@ -203,7 +204,11 @@ function GroupPage({match}) {
                          </div>
                          </form>
                     </div>
-                   <Link to = {`/room/${gid}`}><button className = "btn btn-danger">Join Room?</button></Link> 
+                    <div className="container-fluid channels mt-5">
+                    <h3>Video Channels</h3>
+                        <GroupChannels id = {gid}/>
+                    </div>
+                  
                 </div>
                 <div className="col-md-6">
                     <div className="container group-posts">

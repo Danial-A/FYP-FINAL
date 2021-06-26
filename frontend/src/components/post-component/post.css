@@ -94,7 +94,12 @@
 }
 
 .icons-post{
-    margin-right: 2vw;
+    margin-left: 1vw;
+    margin-right: 10px;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .icons-post:hover{
@@ -119,4 +124,11 @@
 
 .postimages{
     padding: 10px 50px;
+}
+.wrapperRadios{
+    display: flex;
+    flex-direction: column;
+}
+.reportReason:focus{
+    outline: none;
 }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import moment from 'moment'
 import Axios from 'axios'
 import Tippy from '@tippy.js/react'
-import { faThumbsUp, faComment, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faComment, faTrash, faEdit, faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import axios from 'axios'
 import { Modal, Button } from 'react-bootstrap'
@@ -13,7 +13,14 @@ import 'tippy.js/dist/tippy.css'
 import {toast} from 'react-toastify'
 import {SRLWrapper} from 'simple-react-lightbox'
 
-
+const radioOptions = [
+  'Violence',
+  "Harassment",
+  'False Information',
+  "Spam",
+  "Hate Speech",
+  "Other"
+]
 
 function Post({ posts, loading }) {
   const images = [
@@ -66,6 +73,14 @@ function Post({ posts, loading }) {
   const handleShow = () => setShow(true)
   const [title,setTitle] = useState('')
   const [body,setBody] = useState('')
+
+  //report modal
+  const [showReport, setShowReport] = useState(false);
+  const closeReport = () => setShowReport(false);
+  const openReport = () => setShowReport(true)
+
+  const [reason, setReason] = useState('')
+  const [reasonDescription,setReasonDescription] = useState('')
 
 
   const checkLike =async (postid) => {
@@ -120,14 +135,15 @@ function Post({ posts, loading }) {
                 <div className="col-md-8">
                   <span className="user-heading">User:</span> <span>{post.author.username}</span>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-4" style = {{paddingRight:"0"}}>
                 {post.author._id?.toString() === localStorage.getItem('userid') ?
                   <div className = "icons-row"> 
                       <span className = "icons-post" onClick = {()=> DeletePost(post._id)}><FontAwesomeIcon icon={faTrash}  /> Delete</span>
                     <span className = "icons-post" onClick = {handleShow}><FontAwesomeIcon icon={faEdit}  /> Edit</span>
+                    
                   </div>
                   :
-                 <div></div>
+                  <span className = "icons-post" onClick = {openReport}><FontAwesomeIcon icon={faExclamation}/> Report</span>
                 }
               </div>
               </div> 
@@ -198,6 +214,39 @@ function Post({ posts, loading }) {
             </Modal.Footer>
           </Modal>
           
+      </>
+
+      <>
+      <Modal show={showReport} onHide={closeReport}>
+      <Modal.Header closeButton>
+      <Modal.Title>Report Post</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+      <h5>Select a reason: </h5>
+              <div className="wrapperRadios">
+                  {
+                    radioOptions.map(o=>(
+                      <div className="radioItem">
+                      <input type = "radio" name = "reasonRadio" value = {o} onClick = {(e)=> {
+                        setReason(e.target.value)
+                      }}/>
+                      <label style = {{marginLeft:"10px"}}>{o}</label>
+                      </div>
+                    ))
+                  }
+              </div>
+              <div className="reason">
+              <br/>
+              <h5>Describe reason for reporting</h5>
+                  <textarea name="reportReason" id="reportReason" cols="50" rows = "3" className = "reportReason" onChange = {(e)=> setReasonDescription(e.target.value)}></textarea>
+              </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={closeReport} >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       </>
 
 

@@ -714,3 +714,16 @@ module.exports.get_new_registered = (req,res)=>{
         }
     })
 }
+
+//get all users for admin display
+module.exports.get_all_admin_users = (req,res)=>{
+    User.find({}, "firstname lastname username createdAt", (err,users)=>{
+        if(err) res.status(400).json({
+            message:"Error finding users",
+            err
+        })
+        else{
+            res.json(users)
+        }
+    })
+}

@@ -1,0 +1,11 @@
+.channelsWrapper{
+   display: flex;
+   flex-direction: column;
+   width: 100%;
+   justify-content: center;
+   align-items: center;
+}
+.item{
+    width: 80%;
+    padding: 10px 0;
+}

@@ -11,7 +11,7 @@ class JitsiComponent extends Component {
         console.log(props)
         super(props);
         this.state = {
-            room: props.match.params.id,
+            room: props.match?.params.id,
             user: {
                 name: localStorage.getItem('username')
             },
@@ -90,15 +90,15 @@ class JitsiComponent extends Component {
     // custom events
     executeCommand(command) {
         this.api.executeCommand(command);
-        if(command == 'hangup') {
+        if(command === 'hangup') {
             return this.props.history.push('/');
         }
 
-        if(command == 'toggleAudio') {
+        if(command === 'toggleAudio') {
             this.setState({ isAudioMuted: !this.state.isAudioMuted });
         }
 
-        if(command == 'toggleVideo') {
+        if(command === 'toggleVideo') {
             this.setState({ isVideoMuted: !this.state.isVideoMuted });
         }
     }

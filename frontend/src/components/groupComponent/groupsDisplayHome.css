@@ -104,3 +104,15 @@ span.Create-Group:hover{
     border-radius: 10px;
     overflow-y: scroll;
 }
+
+.channels{
+    padding:0 ;
+    height: auto;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.channels h3{
+    text-align: center;
+    padding: 10px 0 ;
+}

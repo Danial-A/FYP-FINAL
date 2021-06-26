@@ -6,7 +6,7 @@ const {postValidationSchema} = require('../validation/validationSchema');
 
 //Retrieve all posts 
 module.exports.get_all = (req,res)=>{
-    Post.find().sort({createdAt :-1}).exec((err,posts)=>{
+    Post.find().sort({createdAt :-1}).populate('author', "firstname lastname username ").exec((err,posts)=>{
         err ? res.json(err) : res.json(posts)
     })
 }
@@ -46,7 +46,13 @@ module.exports.add_post = async (req,res)=>{
 
 //get post by id
 module.exports.get_post_by_id = (req,res)=>{
-    Post.findById(req.params.id).populate('comments').populate('author', 'username').exec((error,post)=>{
+    Post.findById(req.params.id).populate({
+        path:"comments",
+        populate:{
+            path:"userid",
+            select:"firstname lastname username"
+        }
+    }).populate('author', 'username firstname lastname').exec((error,post)=>{
         if(error) return res.status(400).json({
             message:"error finding the post",
             error
@@ -245,7 +251,7 @@ module.exports.get_following_users_posts = (req,res)=>{
 module.exports.latest_posts = (req,res)=>{
     Post.find({}, "createdAt author likes comments").sort({createdAt: -1}).limit(5).populate({
         path:'author',
-        select:"firstname lastname"
+        select:"firstname lastname profileImage"
     }).exec((err,posts)=>{
         if(err) res.status(400).json({
             err,
@@ -254,5 +260,12 @@ module.exports.latest_posts = (req,res)=>{
         else{
             res.json(posts)
         }
+    })
+}
+
+//report post 
+module.exports.report_post = (req,res)=>{
+    Post.findById(req.params.id, (err,post)=>{
+        
     })
 }
