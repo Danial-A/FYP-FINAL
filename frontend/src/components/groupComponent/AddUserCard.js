@@ -19,7 +19,7 @@ function AddUserCard({user,groupid}) {
         try{
             const response = await axios.post(`http://localhost:8080/groups/${groupid}/members/add`, {userid:id})
             if(response.data === '')
-            console.log(response)
+            console.log(response.data)
         }catch(err){
             console.log(err)
         }

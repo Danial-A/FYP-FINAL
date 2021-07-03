@@ -10,6 +10,9 @@ import OutputSection from '../components/editor-components/outputsection'
 import VideoSection from '../components/editor-components/videosection'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import axios from 'axios'
+import ReactCrop from 'react-image-crop'
+import 'react-image-crop/dist/ReactCrop.css';
 
 
 function EditorPage() {
@@ -18,6 +21,20 @@ function EditorPage() {
     const [js,setJS] = useState('//Write your javascript here')
     const [tabIndex, setTabIndex] = useState(0);
     const videoRef = useRef(null)
+    const [image, setImage] = useState()
+    const [crop,setCrop] = useState({
+        aspect: 16/9
+    })
+    const [croppedImage, setCroppedImage] = useState()
+
+    const ArrayBufferToBase64 =  (buffer)=> {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        for (var len = bytes.byteLength, i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
 
 
 
@@ -29,9 +46,57 @@ function EditorPage() {
     var {id} = useParams()
 
     const getScreenShot = async ()=>{
-       console.log("Hello jee")
+       try{
+        const res = await axios.get('http://localhost:8080/users/get/screenshot', {
+            video:id
+        })
+        const img = await axios.get(res.data.image, {
+            responseType:"arraybuffer"
+        })
+     
+       const img64 = await ArrayBufferToBase64(img.data)
+       await setImage(img64)
+       handleShow()
+        
+       }
+       catch(err){
+           console.log(err)
+       }
     }
 
+    const handleOnCropChange = (crop) =>{
+        console.log(crop)
+        setCrop(crop)
+        
+    }
+
+    function getCroppedImg() {
+        const canvas = document.createElement('canvas');
+        
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+        const ctx = canvas.getContext('2d');
+      
+        ctx.drawImage(
+          image,
+          crop.x * scaleX,
+          crop.y * scaleY,
+          crop.width * scaleX,
+          crop.height * scaleY,
+          0,
+          0,
+          crop.width,
+          crop.height,
+        );
+      
+       const base64Image = canvas.toDataURL('image/jpeg');
+       setCroppedImage(base64Image)
+      }
+      const getText = () =>{
+          console.log("Hello jee")
+      }
 
     return (
         <div>
@@ -84,8 +149,12 @@ function EditorPage() {
                             <button className = "btn btn-danger"
                                 onClick = {()=>{
                                     getScreenShot()
+
                                 }}
                             >Take Screenshot</button>
+                            <button className = "btn btn-danger" onClick = {()=> getText()}>
+                                Get Text
+                            </button>
                                 <div className="row">
                                     <div className="col video-section" ref = {videoRef} >
                                         <VideoSection video = {id}  />
@@ -115,7 +184,11 @@ function EditorPage() {
                 <Modal.Title>Modal heading</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-              oops
+              <div>
+                <ReactCrop src ={`data:image/png;base64,${image}`} crop = {crop} onChange = {handleOnCropChange}/>
+                <button className = "btn btn-danger" onClick = {()=> getCroppedImg()}> Crop Image</button>
+              </div>
+               
               </Modal.Body>
              
             </Modal>

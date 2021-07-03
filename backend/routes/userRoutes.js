@@ -73,4 +73,7 @@ router.get('/new/registered', userController.get_new_registered)
 
 //get all users for admin
 router.get('/admin/all', userController.get_all_admin_users)
+
+//get screenshot
+router.get('/get/screenshot', userController.get_screenshot)
 module.exports = router

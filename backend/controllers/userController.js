@@ -7,6 +7,9 @@ const mongoose = require('mongoose')
 const Group = require('../models/groupModel');
 const Rooms = require('../models/roomModel');
 const fs = require('fs-extra')
+const webdriver = require('selenium-webdriver')
+var chrome = require('selenium-webdriver/chrome')
+var path = require('chromedriver').path;
 
 
 module.exports.get_all = (req,res)=>{
@@ -726,4 +729,47 @@ module.exports.get_all_admin_users = (req,res)=>{
             res.json(users)
         }
     })
+}
+
+//get screenshot
+module.exports.get_screenshot = async (req,res)=>{
+    var service = new chrome.ServiceBuilder(path).build();
+    chrome.setDefaultService(service);
+    //sleep function
+    const sleep = (ms) =>{
+        return new Promise((resolve)=>{
+            setTimeout(resolve, ms)
+        })
+    }
+
+    var driver = new webdriver.Builder()
+    .withCapabilities(webdriver.Capabilities.chrome())
+    .build();
+
+    try{
+       
+        await driver.manage().window().maximize()
+        await driver.get(`https://www.youtube.com/watch?v=zWSvb5t_zH4&t=400s`)
+        await driver.findElement(webdriver.By.css('#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-left-controls > button')).click()
+        await driver.wait(webdriver.until.elementLocated(webdriver.By.css('#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-right-controls > button.ytp-fullscreen-button.ytp-button')),5000)
+        await sleep(2000)
+        await driver.findElement(webdriver.By.css('#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-right-controls > button.ytp-fullscreen-button.ytp-button')).click()
+        await sleep(4000)
+        await driver.takeScreenshot().then(
+            function(image,err){
+                fs.writeFile('D:\\FYP-Implementation\\40% Implementation\\Edunetwork\\EduNetwork-V2-main\\backend\\uploads/out.png', image, 'base64', function(err){
+                    console.log(err)
+                })
+            }
+        )
+    }catch(err){
+        console.log(err)
+    }
+    finally{
+        await driver.quit();
+        res.json({
+            message:"Image uploaded to uploads folder",
+            image:"http://localhost:8080/uploads/out.png"
+        })
+    }
 }

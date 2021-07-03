@@ -22,12 +22,10 @@ function UserProfile() {
 
     const uid = localStorage.getItem('userid')
     const [user,setUser] = useState({})
-    const [profileImg, setProfileImg] = useState('')
     useEffect(async()=>{
         try{
             const response = await axios.get(`http://localhost:8080/users/${uid}`)
             setUser(response.data)
-            setProfileImg(`http://localhost:8080/${response.data.profileImage}`)
         }catch(err){
             console.log(err)
         }
