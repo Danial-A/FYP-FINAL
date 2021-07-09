@@ -5,7 +5,8 @@ import moment from 'moment'
 import {toast} from 'react-toastify'
 import './membercard.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-function MemberCard({user, groupid}) {
+function MemberCard({users, groupid}) {
+  console.log(users)
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -30,7 +31,8 @@ function MemberCard({user, groupid}) {
       }
   }
     return (
-      <>
+      users?.length > 0 ? users.map(user=>(
+        <>
         <div className = "card-container mb-2" onClick = {handleShow}>
             <img src="/images/Dp.svg" alt="" height = "40px" style = {{marginRight:"10px"}}/>
             {user.firstname} {user.lastname}
@@ -56,6 +58,8 @@ function MemberCard({user, groupid}) {
       </Modal>
 
       </>
+      )) : <div>No users</div>
+      
      
     )
 }

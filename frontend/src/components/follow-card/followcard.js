@@ -43,7 +43,7 @@ function FollowCard({user}) {
             setImage(`http://localhost:8080/uploads/${user._id}/${user.profileImage}`)
         }
     },[user])
-    console.log(image)
+
     return (
         <>
         <div className="follow-card" onClick = {handleShow}>

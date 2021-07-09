@@ -40,7 +40,10 @@ module.exports.create_group =async (req,res)=>{
                     else{
                         user.groups.push(response._id)
                         user.save()
-                        .then(res.json("New group created, user added as admin, group added to user groups list, chat added to group"))
+                        .then(res.json({
+                            message:"New group created, user added as admin, group added to user groups list, chat added to group",
+                            group:group
+                        }))
                         .catch(err=> res.status(400).json({
                             err,
                             message:"Error adding group to user list"
@@ -407,3 +410,64 @@ module.exports.search_by_title = (req,res)=>{
     ]).then(group=> res.json(group)).catch(err=>res.json(err))
 }
 
+//create new channel
+module.exports.create_new_channel = (req,res)=>{
+    Group.findById(req.params.id, (err,group)=>{
+        if(err) return res.status(400).json({
+            message:"Error fetching group information",
+            err
+        })
+        else{
+            if(group.channels.length >= 5) {
+                res.json({
+                    message:"Cannot create more than 5 channels!",
+                    length:group.channels.length
+                })
+            }else{
+                const channelName = req.body.channelName
+                group.channels.push({channelName})
+                group.save()
+                .then(res.json({
+                    message:"New channel added for group",
+                    channels:group.channels
+                }))
+                .catch(err => res.status(400).json({
+                    message:"Error adding channel to the group",
+                    err
+                }))
+                }
+        }
+    })
+}
+
+//delete channel
+module.exports.delete_channel = (req,res)=>{
+    Group.findById(req.params.id, (err,group)=>{
+        if(err) return res.status(400).json({
+            message:"Error fetching group information",
+            err
+        })
+        else{
+            group.channels.remove(req.body.id)
+            group.save()
+            .then(res.json("Channel Removed"))
+            .catch(err => res.status(400).json({
+                message:"Error adding channel to the group",
+                err
+            }))
+        }
+    })
+}
+
+//get all channels
+module.exports.get_all_channels = (req,res) =>{
+    Group.findById(req.params.id, (err,group)=>{
+        if(err) return res.status(400).json({
+            message:"Error fetching group information",
+            err
+        })
+        else{
+            res.json(group.channels)
+        }
+    })
+}

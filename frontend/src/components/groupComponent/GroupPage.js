@@ -25,7 +25,6 @@ function GroupPage({match}) {
     const [filteredUsers, setFilteredUsers] = useState([])
     const [groupMembers,setGroupMembers] = useState([])
     const [groupAdmins,setGroupAdmins] = useState([])
-    const [TotalPosts, setTotalPosts] = useState([]);
     const [posts,setPosts] = useState([])
     const [chatid, setChatid] = useState('')
     const [chat, setChat] = useState({})
@@ -33,7 +32,10 @@ function GroupPage({match}) {
     const [arrivalMessage,setArrivalMessage ] = useState(null)
     const [messages,setMessages ] = useState([])
     const [newMessage, setNewMessage] = useState('')
+    const [channels,setChannels] = useState([])
     
+    // console.log(messages)
+
 
     useEffect(()=>{
         axios.get(`http://localhost:8080/groups/${gid}/`)
@@ -43,7 +45,7 @@ function GroupPage({match}) {
             setGroupAdmins(response.data.admins)
             setGroupMembers(response.data.groupMembers)
             setChatid(response.data.chatid)
-
+            setChannels(response.data.channels)
         }).catch(err=>{
             console.log(err)
         })
@@ -78,12 +80,13 @@ function GroupPage({match}) {
     useEffect(async()=>{
         try{
          const res =await  axios.get(`http://localhost:8080/rooms/${chatid}/`)
+         //console.log(res.data, chatid)
          setMessages(res.data.messages)
          setChat(res.data)
         }catch(err){
             console.log(err)
         }
-     },[])
+     },[gid])
     
 
     useEffect(() => {
@@ -111,7 +114,8 @@ function GroupPage({match}) {
     const onSubmit = async (values,onSubmitProps) =>{
         try{
             const res = await axios.post(`http://localhost:8080/groups/${gid}/posts/create`, values)
-            setTotalPosts([...TotalPosts, res.data.post])
+            console.log(res.data.post)
+            setPosts([...posts, res.data.post])
             onSubmitProps.resetForm()
         }catch(err){
             console.log("Error:", err)
@@ -160,6 +164,9 @@ function GroupPage({match}) {
             return false
         } 
     }
+
+
+
     return (
         <div className = "container-fluid bottom-margin">
         <NavigationBar/>
@@ -206,7 +213,7 @@ function GroupPage({match}) {
                     </div>
                     <div className="container-fluid channels mt-5">
                     <h3>Video Channels</h3>
-                        <GroupChannels id = {gid}/>
+                        <GroupChannels groupid = {gid}/>
                     </div>
                   
                 </div>
@@ -220,22 +227,14 @@ function GroupPage({match}) {
                 <h5 style = {{color:"white"}}>Group Members</h5>
                     <div className="container members-section " style = {{overflowY:"scroll"}}>
                         
-                        
-                            {
-                                groupMembers.map(
-                                    u=>(
-                                        groupMembers.length > 0 ? <MemberCard user = {u} groupid = {gid}/> : <li>No users</li>
-                                    )
-                                )
-                            } 
-                        {
-                            checkAdmin ? <div class="input-group mb-3">
+                            <MemberCard users = {groupMembers} groupid = {gid}/>
+                            
+                            <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Search user.."
                                 value = {userSearch}
                                 onChange = {e=> setUserSearch(e.target.value)}
                             />
-                          </div> : null
-                        }
+                          </div>
                           <div className="users-search">
                             {
                                 filteredUsers.map(u => (
@@ -246,13 +245,9 @@ function GroupPage({match}) {
                     </div>
                     <div className="container admins mt-3">
                         <h5>Group Admins</h5>
-                        {
-                            groupAdmins.map(
-                                u=>(
-                                    groupAdmins.length > 0 ? <MemberCard user = {u}/> : <div>No users</div>
-                                )
-                            )
-                        }
+                      
+                            <MemberCard users = {groupAdmins}/>
+                             
                             
                     </div>
                    <div className="groupChatWrapper">

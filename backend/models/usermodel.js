@@ -1,5 +1,5 @@
 const mongoose =  require("mongoose");
-
+const random = require('mongoose-simple-random')
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -75,6 +75,7 @@ const userSchema = new Schema({
     timestamps:true,
     autoIndex:false
 })
+userSchema.plugin(random)
 const Users = mongoose.model("users", userSchema)
 
 module.exports = Users;

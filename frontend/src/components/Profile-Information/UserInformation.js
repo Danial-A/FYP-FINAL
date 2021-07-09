@@ -25,6 +25,16 @@ function UserInformation() {
             closeOnClick:true
         })
     }
+
+    const imageUploaded = () =>{
+        toast.success("Image uploaded successfully!", {
+            position:"top-center",
+            autoClose:3000,
+            hideProgressBar:true,
+            pauseOnHover:true,
+            closeOnClick:true
+    })
+    }
     const user = localStorage.getItem('userid')
     const [User, setUser] = useState({})
     const [interests, setInterests] = useState([])
@@ -48,7 +58,6 @@ function UserInformation() {
             setUser(UserInformation.data)
             setInterests(UserInformation.data.interests)
             setProfileImg(`http://localhost:8080/uploads/users/${user}/${UserInformation.data.profileImage}`)
-            console.log(UserInformation)
         }
         getUserInfo()
     },[])
@@ -103,6 +112,9 @@ function UserInformation() {
             data.append("file", file)
             const imageUpload =await axios.post(`http://localhost:8080/users/${user}/image/upload`, data)
             console.log(imageUpload.data)
+            setProfileImg(`http://localhost:8080/uploads/users/${user}/${imageUpload.data.image}`)
+            imageUploaded()
+            profileClose()
         }catch(err){
             console.log(err)
         }
@@ -172,7 +184,7 @@ function UserInformation() {
                     <Modal.Body>
                     <form encType = "multipart/form-data">
                         <div class="input-group mb-3">
-                        <input type="file" class="form-control" name = "file" accept = ".jpg"
+                        <input type="file" class="form-control" name = "file"
                             onChange = {event=>{
                                 const file = event.target.files[0]
                                 console.log(event.target.files)

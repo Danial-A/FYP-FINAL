@@ -2,7 +2,7 @@ const feedback = require('../models/feedbackModel')
 
 
 //get all feedbacks
-module.get_all_feedbacks = (req,res) =>{
+module.exports.get_all_feedbacks = (req,res) =>{
     feedback.find({}).sort({createdAt: -1}).exec((err,feedbacks)=>{
         if(err) res.status(400).json({
             err,
@@ -15,7 +15,7 @@ module.get_all_feedbacks = (req,res) =>{
 }
 
 //get feedback by id
-module.get_feedback_by_id = (req,res) =>{
+module.exports.get_feedback_by_id = (req,res) =>{
     feedback.findById(req.params.id, (err,feedback) =>{
         if(err) res.status(400).json({
             err,
@@ -45,9 +45,9 @@ module.exports.delete_feedback = (req,res)=>{
 
 //new feedback 
 module.exports.new_feedback = (req,res)=>{
-    const {feedback, email, user} = req.body;
+    const {feedbackBody, email, name} = req.body;
     const newFeedback = new feedback({
-        feedback, email, user
+        feedbackBody, email, name
     })
     newFeedback.save()
     .then(

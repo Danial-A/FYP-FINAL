@@ -52,17 +52,17 @@ class JitsiComponent extends Component {
     }
 
     handleParticipantLeft = async (participant) => {
-        console.log("handleParticipantLeft", participant); // { id: "2baa184e" }
+        console.log("handleParticipantLeft", participant);
         const data = await this.getParticipants();
     }
 
     handleParticipantJoined = async (participant) => {
-        console.log("handleParticipantJoined", participant); // { id: "2baa184e", displayName: "Shanu Verma", formattedDisplayName: "Shanu Verma" }
+        console.log("handleParticipantJoined", participant); 
         const data = await this.getParticipants();
     }
 
     handleVideoConferenceJoined = async (participant) => {
-        console.log("handleVideoConferenceJoined", participant); // { roomName: "bwb-bfqi-vmh", id: "8c35a951", displayName: "Akash Verma", formattedDisplayName: "Akash Verma (me)"}
+        console.log("handleVideoConferenceJoined", participant); 
         const data = await this.getParticipants();
     }
 
@@ -72,17 +72,17 @@ class JitsiComponent extends Component {
     }
 
     handleMuteStatus = (audio) => {
-        console.log("handleMuteStatus", audio); // { muted: true }
+        console.log("handleMuteStatus", audio); 
     }
 
     handleVideoStatus = (video) => {
-        console.log("handleVideoStatus", video); // { muted: true }
+        console.log("handleVideoStatus", video);
     }
 
     getParticipants() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                resolve(this.api.getParticipantsInfo()); // get all participants
+                resolve(this.api.getParticipantsInfo());
             }, 500)
         });
     }

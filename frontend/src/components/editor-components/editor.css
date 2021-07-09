@@ -16,3 +16,8 @@
 .video-iframe{
     height: inherit;
 }
+
+.screenshot-btn{
+    width: 100%;
+    border-radius: 0;
+}

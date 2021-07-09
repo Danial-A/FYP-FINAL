@@ -10,7 +10,7 @@ const feedbackSchema = new schema({
     type:String,
     required:true,
   },
-  feedback:{
+  feedbackBody:{
     type:String,
     required:true,
   }
@@ -20,4 +20,4 @@ const feedbackSchema = new schema({
 })
 
 const feedback = mongoose.model('feedbacks', feedbackSchema)
-module.exports = feedback
+module.exports = feedback 

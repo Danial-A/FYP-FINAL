@@ -6,6 +6,26 @@
    align-items: center;
 }
 .item{
-    width: 80%;
+    width: 50%;
     padding: 10px 0;
+}
+
+.channelContainer{
+    margin-bottom: 10px;
+    display: flex;
+    float: left;
+    width: 100%;
+    padding-left: 10px;
+    justify-content: space-between;
+}
+
+.channel-delete-icon{
+    margin-right: 5px;
+    color:#1c2237
+}
+
+.channel-delete-icon:hover{
+    color:crimson;
+    transition: 0.3s ease;
+    cursor: pointer;
 }

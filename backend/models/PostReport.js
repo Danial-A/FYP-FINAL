@@ -9,14 +9,14 @@ const reportSchema = new schema({
   },
     postid:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Post',
+        ref:'posts',
         required: [true, "Post id is required"]
     },
     reason:{
         type:String,
         required:[true, "Reason for reporting must be provided..."]
     },
-    reasonDescription:{
+    description:{
         type:String,
         required:[true, "Description is required"]
     }

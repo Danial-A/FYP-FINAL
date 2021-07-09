@@ -1,13 +1,13 @@
 const router = require('express').Router()
 const postController = require('../controllers/postController')
-const tokenValidation = require('../validation/tokenValidation')
+
 
 //Get all posts 
 router.get('/', postController.get_all)
 //Delete all posts
 router.post('/nuke', postController.nuke)
 //Add new post
-router.post('/add', postController.add_post)
+router.post('/add',postController.add_post)
 //Delete posts by a specific user
 router.delete('/user/delete', postController.delete_all_user_posts)
 //Delete a single post by id

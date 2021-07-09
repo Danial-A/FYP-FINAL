@@ -45,3 +45,13 @@
     font-size: 20px;
     font-weight: 500;
 }
+
+.images-icon{
+    color: crimson;
+}
+
+.images-icon:hover{
+    color: #1c2237;
+    cursor: pointer;
+    transition: 0.5s ease;
+}

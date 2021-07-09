@@ -1,11 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './create-post.css'
 import {Card} from 'react-bootstrap'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImages } from '@fortawesome/free-solid-svg-icons'
+
+
 function UserPost({setTotalPosts, posts}) {
+
+    const [files,setFiles] = useState(null)
+
+    const inputRef = useRef(null)
 
     const initialValues = {
         title: '',
@@ -70,9 +78,23 @@ function UserPost({setTotalPosts, posts}) {
                             </div>
                         </div>
                     </div>
+                    <div className="row">
+                        <div className="col">
+                        <div className="post-image-btn">
+                        <input type="file" multiple  id = "file" ref = {inputRef} style = {{display:"none"}} accept = "image/*"/>
+                                
+                               <FontAwesomeIcon className = "images-icon" icon = {faImages} size = "2x" onClick = {(e)=>{
+                                   e.preventDefault()
+                                   inputRef.current.click()
+                               }}/>
+                        </div>
+                        </div>
+                    </div>
+                    
 
                     <div className="add-post-button btn-right">
-                        <button type="submit">Add Post!</button>
+                        <button type="submit">Create Post!</button>
+                        
                     </div>
                         </Card.Body>
                     </Card>

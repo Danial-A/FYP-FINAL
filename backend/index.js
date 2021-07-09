@@ -35,6 +35,7 @@ const messageRoutes = require('./routes/messageRoutes')
 const privateRoutes = require('./routes/privateChatRoutes');
 const adminRoutes = require('./routes/adminRoutes')
 const reportRoutes = require('./routes/reportRoute')
+const feedbackRoutes = require('./routes/feedbackRoutes')
 // const feebackRoutes = require('./routes/feedbackRoutes')
 
 //API Middleware
@@ -46,6 +47,7 @@ app.use('/chats',privateRoutes)
 app.use('/messages',messageRoutes)
 app.use('/admin',adminRoutes)
 app.use('/reports', reportRoutes)
+app.use('/feedbacks', feedbackRoutes)
 // app.use('/feedback', feebackRoutes)
 app.use('/uploads', express.static('uploads'))
 

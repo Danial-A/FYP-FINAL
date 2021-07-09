@@ -34,7 +34,8 @@ const postModel = new Schema({
         required:true,
         trim:true,
         lowercase:true
-    }
+    },
+    
 },{
     timestamps:true
 })

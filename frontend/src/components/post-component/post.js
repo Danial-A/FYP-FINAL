@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './post.css'
 import 'tippy.js/dist/tippy.css'
 import {toast} from 'react-toastify'
-import {SRLWrapper} from 'simple-react-lightbox'
+
 
 const radioOptions = [
   'Violence',
@@ -120,6 +120,16 @@ function Post({ posts, loading }) {
       }
   }
 
+  const handleReport = async (postid)=>{
+    const res = await axios.post(`http://localhost:8080/reports/${postid}/report`,{
+      userid,
+      reason,
+      description:reasonDescription
+    })
+    setReasonDescription('')
+    closeReport()
+  }
+
   if (loading) {
     return <h2>Loading...</h2>
   }
@@ -181,6 +191,49 @@ function Post({ posts, loading }) {
                 </div>
 
               </div>
+
+              <>
+              <Modal show={showReport} onHide={closeReport}>
+              <Modal.Header closeButton>
+              <Modal.Title>Report Post</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+              <h5>Select a reason: </h5>
+                      <div className="wrapperRadios">
+                          {
+                            radioOptions.map(o=>(
+                              <div className="radioItem">
+                              <input type = "radio" name = "reasonRadio" value = {o} onClick = {(e)=> {
+                                setReason(e.target.value)
+                              }}/>
+                              <label style = {{marginLeft:"10px"}}>{o}</label>
+                              </div>
+                            ))
+                          }
+                      </div>
+                      <div className="reason">
+                      <br/>
+                      <h5>Describe reason for reporting</h5>
+                          <textarea name="reportReason" id="reportReason" cols="50" rows = "3" className = "reportReason" onChange = {(e)=>{
+                            setReasonDescription(e.target.value)
+                            console.log(reasonDescription)
+                          }}></textarea>
+                      </div>
+                      <button className = "btn btn-danger" onClick = {()=>{
+                        console.log(post._id)
+                        // handleReport(post._id)
+                      }}>Report!</button>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="danger" onClick={closeReport} >
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+              </>
+
+
+
               <>
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
@@ -216,38 +269,7 @@ function Post({ posts, loading }) {
           
       </>
 
-      <>
-      <Modal show={showReport} onHide={closeReport}>
-      <Modal.Header closeButton>
-      <Modal.Title>Report Post</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-      <h5>Select a reason: </h5>
-              <div className="wrapperRadios">
-                  {
-                    radioOptions.map(o=>(
-                      <div className="radioItem">
-                      <input type = "radio" name = "reasonRadio" value = {o} onClick = {(e)=> {
-                        setReason(e.target.value)
-                      }}/>
-                      <label style = {{marginLeft:"10px"}}>{o}</label>
-                      </div>
-                    ))
-                  }
-              </div>
-              <div className="reason">
-              <br/>
-              <h5>Describe reason for reporting</h5>
-                  <textarea name="reportReason" id="reportReason" cols="50" rows = "3" className = "reportReason" onChange = {(e)=> setReasonDescription(e.target.value)}></textarea>
-              </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={closeReport} >
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      </>
+     
 
 
             </div>

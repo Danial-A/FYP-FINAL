@@ -33,12 +33,12 @@ function GroupsDisplay() {
             return window.alert("Enter title and description first")
         }
         try{
-            const response = axios.post(`http://localhost:8080/groups/create/${userid}`,{
+            const response =await axios.post(`http://localhost:8080/groups/create/${userid}`,{
             title,
             description
         })
 
-        console.log(response.data)
+        setGroups([...groups, response.data.group])
 
         }catch(err){
             console.log(err)

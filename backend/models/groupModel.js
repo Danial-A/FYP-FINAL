@@ -38,8 +38,11 @@ const groupModel = new schema({
     },
     channels:[
         {
-            type:String,
-            trim:true
+            channelName:{
+                type:String,
+                required:[true, "Channel name must be provided"],
+                unique:[true, "Channel name must be unique"]
+            }
         }
     ]
     

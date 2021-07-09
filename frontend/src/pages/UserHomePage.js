@@ -7,12 +7,24 @@ import SearchPanel from '../components/userSearch/searchPanel'
 import RecommendedUsers from '../components/recommendations/recommendedUsers'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './UserProfile.css'
-
+import Pagination from '../components/post-component/pagination'
 
 function UserHomePage() {
     const [posts, setPosts] = useState([])
     const [loading, setLoading] = useState(false);
     const uid = localStorage.getItem('userid')
+
+    //pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [postsPerPage] = useState(10);
+
+    const lastPostIndex = currentPage * postsPerPage;
+    const firstPostIndex = lastPostIndex - postsPerPage;
+    const currentPosts = posts.slice(firstPostIndex, lastPostIndex)
+
+    const paginate = (pageNumber)=>{
+        setCurrentPage(pageNumber)
+    }
     
     useEffect(()=>{
         const fetchPosts = async ()=>{
@@ -34,7 +46,8 @@ function UserHomePage() {
                     <SearchPanel/>
                 </div>
                 <div className="col-md-6 mb-5">
-                <Post posts = {posts} loading= {loading} />
+                <Post posts = {currentPosts} loading= {loading} />
+                <Pagination postsPerPage={postsPerPage} totalPosts={posts.length} paginate= {paginate}/>
                 </div>
                 <div className="col-md-3">
                     <RecommendedUsers/>

@@ -25,7 +25,7 @@ function EditorPage() {
     const [crop,setCrop] = useState({
         aspect: 16/9
     })
-    const [croppedImage, setCroppedImage] = useState()
+    const [croppedImage, setCroppedImage] = useState('')
 
     const ArrayBufferToBase64 =  (buffer)=> {
         var binary = '';
@@ -44,18 +44,16 @@ function EditorPage() {
     const handleShow = () => setShow(true);
 
     var {id} = useParams()
-
+    console.log(id)
     const getScreenShot = async ()=>{
        try{
-        const res = await axios.get('http://localhost:8080/users/get/screenshot', {
-            video:id
-        })
+        const res = await axios.get(`http://localhost:8080/users/get/screenshot/${id}`)
         const img = await axios.get(res.data.image, {
             responseType:"arraybuffer"
         })
      
        const img64 = await ArrayBufferToBase64(img.data)
-       await setImage(img64)
+       await setImage(`data:image/png;base64,${img64}`)
        handleShow()
         
        }
@@ -65,37 +63,73 @@ function EditorPage() {
     }
 
     const handleOnCropChange = (crop) =>{
-        console.log(crop)
+        // console.log(image)
         setCrop(crop)
         
     }
 
     function getCroppedImg() {
+      const setimage = new Image();
         const canvas = document.createElement('canvas');
-        
         const scaleX = image.naturalWidth / image.width;
         const scaleY = image.naturalHeight / image.height;
         canvas.width = crop.width;
         canvas.height = crop.height;
         const ctx = canvas.getContext('2d');
+
+        console.log(scaleX, scaleY)
       
-        ctx.drawImage(
-          image,
-          crop.x * scaleX,
-          crop.y * scaleY,
-          crop.width * scaleX,
-          crop.height * scaleY,
-          0,
-          0,
-          crop.width,
-          crop.height,
-        );
+       
+        setimage.onload = function() {
+          ctx.drawImage(
+            setImage,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            crop.width,
+            crop.height,
+          );
+        }
+        setimage.src = image
+        // ctx.drawImage(
+        //   image,
+        //   crop.x * scaleX,
+        //   crop.y * scaleY,
+        //   crop.width * scaleX,
+        //   crop.height * scaleY,
+        //   0,
+        //   0,
+        //   crop.width,
+        //   crop.height,
+        // );
       
        const base64Image = canvas.toDataURL('image/jpeg');
        setCroppedImage(base64Image)
+       //console.log(croppedImage)
       }
       const getText = () =>{
-          console.log("Hello jee")
+        var options = {
+          method: 'POST',
+          url: 'https://microsoft-computer-vision3.p.rapidapi.com/ocr',
+          params: {detectOrientation: 'true', language: 'unk'},
+          headers: {
+            'content-type': 'application/json',
+            'x-rapidapi-key': 'dab1da0aafmsh229eab3ebe61f7dp176896jsne68cb27b9eb3',
+            'x-rapidapi-host': 'microsoft-computer-vision3.p.rapidapi.com'
+          },
+          data: {
+            url: 'https://henryegloff.com/media/How-to-Code-a-Basic-Webpage-Using-HTML-Tutorial-2.jpg'
+          }
+        };
+        
+        axios.request(options).then(function (response) {
+            console.log(response.data)
+        }).catch(function (error) {
+            console.error(error);
+        });
       }
 
     return (
@@ -148,7 +182,7 @@ function EditorPage() {
                             <div className="col-md-6">
                             <button className = "btn btn-danger"
                                 onClick = {()=>{
-                                    getScreenShot()
+                                    getScreenShot(id)
 
                                 }}
                             >Take Screenshot</button>
@@ -185,8 +219,9 @@ function EditorPage() {
               </Modal.Header>
               <Modal.Body>
               <div>
-                <ReactCrop src ={`data:image/png;base64,${image}`} crop = {crop} onChange = {handleOnCropChange}/>
+                <ReactCrop src ={image} crop = {crop} onChange = {handleOnCropChange}/>
                 <button className = "btn btn-danger" onClick = {()=> getCroppedImg()}> Crop Image</button>
+                <img src= {croppedImage === undefined ? "" : croppedImage} alt="" />
               </div>
                
               </Modal.Body>

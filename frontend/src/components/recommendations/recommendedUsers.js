@@ -5,11 +5,10 @@ function RecommendedUsers() {
     const [users,setUsers] = useState([])
     const userid = localStorage.getItem('userid')
     useEffect(()=>{
-        axios.get('http://localhost:8080/users')
+        axios.get('http://localhost:8080/users/random/users')
         
         .then(res=> {
-            const newUsers = res.data.filter(user=> user._id.toString() !== localStorage.getItem('userid'))
-            setUsers(newUsers.slice(0,2))
+            setUsers(res.data)
         })
         .catch(err=> console.log(err))
     },[])
@@ -21,7 +20,7 @@ function RecommendedUsers() {
             headers: {"Access-Control-Allow-Origin": "*"}
           })
           //console.log(response.data)
-          const sendData = await axios.post(`http://localhost:8080/users/${userid}/recommende`, {
+          const sendData = await axios.post(`http://localhost:8080/users/${userid}/recommended`, {
               users:response.data
           })
           console.log(sendData)

@@ -733,6 +733,7 @@ module.exports.get_all_admin_users = (req,res)=>{
 
 //get screenshot
 module.exports.get_screenshot = async (req,res)=>{
+    var url = `https://www.youtube.com/watch?v=${req.params.id}&t=400s`
     var service = new chrome.ServiceBuilder(path).build();
     chrome.setDefaultService(service);
     //sleep function
@@ -747,9 +748,8 @@ module.exports.get_screenshot = async (req,res)=>{
     .build();
 
     try{
-       
         await driver.manage().window().maximize()
-        await driver.get(`https://www.youtube.com/watch?v=zWSvb5t_zH4&t=400s`)
+        await driver.get(url)
         await driver.findElement(webdriver.By.css('#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-left-controls > button')).click()
         await driver.wait(webdriver.until.elementLocated(webdriver.By.css('#movie_player > div.ytp-chrome-bottom > div.ytp-chrome-controls > div.ytp-right-controls > button.ytp-fullscreen-button.ytp-button')),5000)
         await sleep(2000)
@@ -772,4 +772,15 @@ module.exports.get_screenshot = async (req,res)=>{
             image:"http://localhost:8080/uploads/out.png"
         })
     }
+}
+
+//get random users
+module.exports.get_random_users = (req,res)=>{
+    User.findRandom({}, {}, {limit:3}, (err,users)=>{
+        err ? res.status(400).json({
+            err,
+            message:"Error getting users"
+        }) : 
+        res.json(users)
+    })
 }

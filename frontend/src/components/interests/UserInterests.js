@@ -21,9 +21,9 @@ function UserInterests({interests, setInterests}) {
         const response = window.confirm("Remove language?")
         if(response){
             const remove =await axios.post(`http://localhost:8080/users/${localStorage.getItem('userid')}/interests/remove`,{interest})
-            setInterests([...remove.data.interests])
+            console.log(interest)
+            setInterests(interests.filter(i=> i !== interest))
             deleteLanguage(remove.data.message)
-            
         }
     }
     return (

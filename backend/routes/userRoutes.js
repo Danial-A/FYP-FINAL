@@ -75,5 +75,8 @@ router.get('/new/registered', userController.get_new_registered)
 router.get('/admin/all', userController.get_all_admin_users)
 
 //get screenshot
-router.get('/get/screenshot', userController.get_screenshot)
+router.get('/get/screenshot/:id', userController.get_screenshot)
+
+//get random users
+router.get('/random/users', userController.get_random_users)
 module.exports = router

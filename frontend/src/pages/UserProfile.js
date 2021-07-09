@@ -20,16 +20,6 @@ function UserProfile() {
     const [currentPage, setCurrentPage] = useState(1);
     const [postsPerPage] = useState(3);
 
-    const uid = localStorage.getItem('userid')
-    const [user,setUser] = useState({})
-    useEffect(async()=>{
-        try{
-            const response = await axios.get(`http://localhost:8080/users/${uid}`)
-            setUser(response.data)
-        }catch(err){
-            console.log(err)
-        }
-    },[])
     useEffect(()=>{
         const fetchPosts = async ()=>{
             setLoading(true);

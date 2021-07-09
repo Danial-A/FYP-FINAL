@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const GroupController = require('../controllers/groupPostController')
+const { groupValidationSchema } = require('../validation/validationSchema')
 //create new
 router.post('/create/:user', GroupController.create_group)
 //get All groups
@@ -30,6 +31,11 @@ router.get('/:id/members/all', GroupController.get_all_members_and_admins)
 
 //search by title
 router.post('/search/', GroupController.search_by_title)
+
+//add channel
+router.post('/:id/channels/add', GroupController.create_new_channel)
+router.post('/:id/channels/delete', GroupController.delete_channel)
+router.get('/:id/channels', GroupController.get_all_channels)
 
 router.post('/nuke', GroupController.nuke)
 module.exports = router
